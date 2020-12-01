@@ -1,4 +1,4 @@
-import article
+from .article import Article
 
 class RSSHandler:
     def __init__(self):
@@ -54,7 +54,7 @@ class RSSHandler:
                     elif ichild.tag == 'pubDate':
                         date = ichild.text
 
-                self.__articles.append(article.Article(title, link, desc, date))
+                self.__articles.append(Article(title, link, desc, date))
 
             else:
                 print("Unhandled tag", child.tag)
