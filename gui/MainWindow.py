@@ -4,10 +4,9 @@ class MainWindow(QWidget):
     
     def __init__(self):
         super(MainWindow, self).__init__()
+        self.showView()
         
-        self.initUI()
-        
-    def initUI(self):
+    def showView(self):
         
         self.setGeometry(300, 300, 250, 150)
         self.setWindowTitle('RssFeed')    
