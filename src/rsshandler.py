@@ -43,6 +43,7 @@ class RSSHandler:
                 title = ''
                 link = ''
                 desc = ''
+                date = None
                 for ichild in child:
                     if ichild.tag == 'title':
                         title = ichild.text
@@ -50,8 +51,10 @@ class RSSHandler:
                         link = ichild.text
                     elif ichild.tag == 'description':
                         desc = ichild.text
+                    elif ichild.tag == 'pubDate':
+                        date = ichild.text
 
-                self.__articles.append(article.Article(title, link, desc, 'empty'))
+                self.__articles.append(article.Article(title, link, desc, date))
 
             else:
                 print("Unhandled tag", child.tag)
