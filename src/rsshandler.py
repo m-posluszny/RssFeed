@@ -62,3 +62,8 @@ class RSSHandler:
 
     def returnArticles(self):
         return self.__articles
+
+    # This is for debugging purposes?
+    # I have it in vpp, but did not include that in sequence diagram
+    def fetchIsSuccess(self):
+        success = self.__responseCode >= 200 and self.__responseCode <= 299
