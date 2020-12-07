@@ -2,8 +2,16 @@ from hashlib import sha1
 
 class CredentialsHandler:
     def __init__(self, username, password):
+
+        bytes_passwd = password
+
+        if isinstance(password, str):
+            bytes_passwd = password.encode()
+        elif not isinstance(password, bytes):
+            assert(False)
+
         self.__username = username
-        self.__password = password
+        self.__password = bytes_passwd
         self.__dbHandler = None
 
     def doesUserExist(self):
@@ -17,6 +25,7 @@ class CredentialsHandler:
     def encryptCredentials(self):
         hasher = sha1(self.__password)
         self.__password = hasher.hexdigest()
+        print(self.__password)
 
     def areCredValid(self):
         # Password has to encrypted by this point
