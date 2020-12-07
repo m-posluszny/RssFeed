@@ -1,4 +1,5 @@
 from gui.FormView import LoginView, RegisterView
+from gui.MainView import MainView
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QMainWindow, QAction, QDialog, QInputDialog, QFormLayout, QLabel, QListView, QApplication, QDialogButtonBox, QPushButton
 from PySide2.QtGui import QStandardItemModel, QStandardItem
@@ -10,17 +11,29 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("RSS Feed")
         self.setGeometry(300,300,440,640)
         self.setContentsMargins(5,5,5,5)
-        #self.showLogin()   
-        self.loadMenubar()
+        self.__toolBar = self.menuBar()
+        self.showLogin()   
         self.show()
         
     def showLogin(self):
-        self.login_view = LoginView(self)
-        self.setCentralWidget(self.login_view)
+        self.__toolBar.setVisible(False)
+        self._login_view = LoginView(self)
+        self.setCentralWidget(self._login_view)
     
+    def showRegister(self):
+        self.__toolBar.setVisible(False)
+        self._register_view = RegisterView(self)
+        self.setCentralWidget(self._register_view)
 
+    def showMainView(self, user_data):
+        self._main_view = MainView(self)
+        self.loadMenubar()
+        self.setCentralWidget(self._main_view)
+    
+        
     def loadMenubar(self):
-        self.toolBar = bar = self.menuBar()
+        bar = self.__toolBar
+        bar.setVisible(True)
         user = bar.addMenu("App")
         manageUrls = bar.addMenu("Manage URLs")
         manageGroups = bar.addMenu("Manage Groups")

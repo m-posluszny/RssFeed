@@ -5,14 +5,17 @@ class CredentialsHandler:
         self.__username = username
         self.__password = password
         self.__dbHandler = None
-
+    
     def doesUserExist(self):
-        result = None
+        result = None #obsługa tego będzie musiała być dokładniejsza, sprawdzac czy połączenie moze byc nawiązane
         # result = self.__dbHandler.findEntry(username)
         if result == None:
             return False
         else:
             return True
+    
+    def createUser(self):
+        ... #TODO db send operation
         
     def encryptCredentials(self):
         hasher = sha1(self.__password)
