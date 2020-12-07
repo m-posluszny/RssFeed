@@ -63,7 +63,7 @@ class LoginView(FormView):
         if not credHandler.areCredValid():
             #getUserArticles
             user_data = []
-            self._returnSuccesfulLogin(user_data)
+            self.returnSuccesfulLogin(user_data)
     
     def onLinkPress(self, event):
         self._parent.showRegister()
@@ -86,7 +86,7 @@ class RegisterView(FormView):
             #getUserArticles
             credHandler.createUser()
             user_data = []
-            self._returnSuccesfulLogin(user_data)
+            self.returnSuccesfulLogin(user_data)
     
     def onLinkPress(self, event):
         self._parent.showLogin()
