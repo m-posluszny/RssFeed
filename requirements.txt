@@ -1,1 +1,3 @@
 PySide2
+pyside-material
+requests
