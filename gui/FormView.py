@@ -1,6 +1,6 @@
 from libs.credhandler import CredentialsHandler
 from PySide2.QtCore import Qt
-from PySide2.QtGui import QFont
+from PySide2.QtGui import QFont, QPalette, QColor
 from PySide2.QtWidgets  import QLabel, QWidget, QLineEdit, QVBoxLayout, QPushButton
 
 class FormView(QWidget):
@@ -19,6 +19,7 @@ class FormView(QWidget):
         self._widget_label = QLabel("",self)
         self._widget_label.setMaximumHeight(55)
         label_font = QFont("Arial", 35, QFont.Capitalization) 
+        error_font = QFont("Arial", 20, QFont.Capitalization) 
         input_font = QFont("Arial", 12, QFont.Capitalization) 
         subtext_font = QFont("Arial", 10)
         self._action_button = QPushButton("", self)
@@ -32,7 +33,16 @@ class FormView(QWidget):
         self._user_box.setFont(input_font)
         self._widget_label.setFont(label_font)
         self._widget_label.setAlignment(Qt.AlignCenter)
+        self._error_palette = QPalette()
+        self._error_palette.setColor(QPalette.Foreground, QColor("red"))
+        self._error_palette.setColor(QPalette.Background, QColor("red"))
+        self._error_message = QLabel("", self)
+        self._error_message.setStyleSheet("QLabel { color : red; }")
+        self._error_message.setFont(error_font)
+        self._error_message.setAlignment(Qt.AlignLeft)
+        self._error_message.setVisible(False)
         self._form_layout.addWidget(self._widget_label)
+        self._form_layout.addWidget(self._error_message)
         self._form_layout.addWidget(self._user_box)
         self._form_layout.addWidget(self._password_box)
         self._form_layout.addWidget(self._action_button)
@@ -47,12 +57,17 @@ class FormView(QWidget):
     
     def onLinkPress(self, event):
         ...
+
+    def displayErrorMessage(self):
+        self._error_message.setVisible(True)
+
 class LoginView(FormView):
     
     def __init__(self,parent=None):
         super().__init__(parent)
         self._widget_label.setText("Login")
         self._action_button.setText("Login")
+        self._error_message.setText("Failed to login, bad credentials")
         self._subtext_label.setText("Don't have an account? Register")
         
     def onConfirmPress(self,event):
@@ -60,10 +75,14 @@ class LoginView(FormView):
         password = self._password_box.text()
         credHandler = CredentialsHandler(username,password)
         credHandler.encryptCredentials()
-        if not credHandler.areCredValid():
+        if credHandler.areCredValid():
             #getUserArticles
             user_data = []
             self.returnSuccesfulLogin(user_data)
+        else:
+            self.displayErrorMessage()
+
+
     
     def onLinkPress(self, event):
         self._parent.showRegister()
@@ -74,6 +93,7 @@ class RegisterView(FormView):
         super().__init__(parent)
         self._widget_label.setText("Register")
         self._action_button.setText("Register")
+        self._error_message.setText("Login exists, pick different one")
         self._subtext_label.setText("Already registered? Login")
     
     
@@ -87,6 +107,8 @@ class RegisterView(FormView):
             credHandler.createUser()
             user_data = []
             self.returnSuccesfulLogin(user_data)
+        else:
+            self.displayErrorMessage()
     
     def onLinkPress(self, event):
         self._parent.showLogin()
