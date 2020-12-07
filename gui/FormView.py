@@ -19,7 +19,7 @@ class FormView(QWidget):
         self._widget_label = QLabel("",self)
         self._widget_label.setMaximumHeight(55)
         label_font = QFont("Arial", 35, QFont.Capitalization) 
-        error_font = QFont("Arial", 20, QFont.Capitalization) 
+        error_font = QFont("Arial", 18, QFont.Capitalization) 
         input_font = QFont("Arial", 12, QFont.Capitalization) 
         subtext_font = QFont("Arial", 10)
         self._action_button = QPushButton("", self)
@@ -81,8 +81,6 @@ class LoginView(FormView):
             self.returnSuccesfulLogin(user_data)
         else:
             self.displayErrorMessage()
-
-
     
     def onLinkPress(self, event):
         self._parent.showRegister()
