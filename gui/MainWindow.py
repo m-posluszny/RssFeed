@@ -1,25 +1,43 @@
 from gui.FormView import LoginView, RegisterView
 from gui.MainView import MainView
 from PySide2.QtCore import Qt
-from PySide2.QtWidgets import QMainWindow, QAction, QDialog, QInputDialog, QFormLayout, QLabel, QListView, QApplication, QDialogButtonBox, QPushButton
+from PySide2.QtWidgets import (
+    QMainWindow,
+    QDesktopWidget,
+    QAction,
+    QDialog,
+    QInputDialog,
+    QFormLayout,
+    QLabel,
+    QListView,
+    QApplication,
+    QDialogButtonBox,
+    QPushButton,
+)
 from PySide2.QtGui import QStandardItemModel, QStandardItem
 
+
 class MainWindow(QMainWindow):
-    
     def __init__(self):
         super(MainWindow, self).__init__()
         self.setWindowTitle("RSS Feed")
-        self.setGeometry(300,300,440,640)
-        self.setContentsMargins(5,5,5,5)
+        self.setGeometry(300, 300, 440, 640)
+        self.center()
         self.__toolBar = self.menuBar()
-        self.showLogin()   
+        self.showLogin()
         self.show()
-        
+
+    def center(self):
+        qRect = self.frameGeometry()
+        centerPoint = QDesktopWidget().availableGeometry().center()
+        qRect.moveCenter(centerPoint)
+        self.move(qRect.topLeft())
+
     def showLogin(self):
         self.__toolBar.setVisible(False)
         self._login_view = LoginView(self)
         self.setCentralWidget(self._login_view)
-    
+
     def showRegister(self):
         self.__toolBar.setVisible(False)
         self._register_view = RegisterView(self)
@@ -29,14 +47,14 @@ class MainWindow(QMainWindow):
         self._main_view = MainView(self)
         self.loadMenubar()
         self.setCentralWidget(self._main_view)
-    
-        
+
     def loadMenubar(self):
         bar = self.__toolBar
         bar.setVisible(True)
         user = bar.addMenu("App")
         manageUrls = bar.addMenu("Manage URLs")
         manageGroups = bar.addMenu("Manage Groups")
+        manageViews = bar.addMenu("View")
 
         addURLAction = QAction("Add URL", self)
         addURLAction.setShortcut("Ctrl-N")
@@ -60,20 +78,41 @@ class MainWindow(QMainWindow):
         manageGroups.addAction(addGroupAction)
         manageGroups.addAction(removeGroupAction)
 
+        viewAllAction = QAction("View All", self)
+        # viewAction.setShortcut("Ctrl-Shift-N")
+        viewAllAction.triggered.connect(self.viewAllCallback)
+
+        viewGroupAction = QAction("View Group", self)
+        # viewGroupAction.setShortcut("Ctrl-Shift-P")
+        viewGroupAction.triggered.connect(self.viewGroupCallback)
+
+        viewPopularAction = QAction("View Popular", self)
+        # viewPopularAction.setShortcut("Ctrl-Shift-P")
+        viewPopularAction.triggered.connect(self.viewPopularCallback)
+
+        manageViews.addAction(viewAllAction)
+        manageViews.addAction(viewGroupAction)
+        manageViews.addAction(viewPopularAction)
+
         exitAction = QAction("Quit", self)
         exitAction.setShortcut("Ctrl-X")
         exitAction.triggered.connect(self.exit_app)
 
-        user.addAction(exitAction)
+        logoutAction = QAction("Logout", self)
+        logoutAction.triggered.connect(self.logoutCallback)
         
-    #TODO Move all menubar things to class MenuBar in gui
+        user.addAction(exitAction)
+        user.addAction(logoutAction)
+
+    # TODO Move all menubar things to class MenuBar in gui
     def addURLCallback(self):
         text, ok = QInputDialog.getText(self, "Add URL", "Paste URL: ")
 
         if ok:
             # Here we use URL manager to add this into the database
             print(text)
-    #TODO Doubleclick should select/deselect not change value, regex on url names
+
+    # TODO Doubleclick should select/deselect not change value, regex on url names
     def removeURLCallback(self):
         dialog = QDialog(parent=self)
         form = QFormLayout(dialog)
@@ -81,15 +120,17 @@ class MainWindow(QMainWindow):
         listView = QListView(dialog)
         form.addRow(listView)
         model = QStandardItemModel(listView)
-        self.setWindowTitle('Choose URL to remove')
+        self.setWindowTitle("Choose URL to remove")
         # Those are going to be URLs taken from the database
         for item in [str(x) for x in range(10)]:
-              standardItem = QStandardItem(item)
-              standardItem.setCheckable(True)
-              model.appendRow(standardItem)
+            standardItem = QStandardItem(item)
+            standardItem.setCheckable(True)
+            model.appendRow(standardItem)
         listView.setModel(model)
 
-        buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, Qt.Horizontal, self)
+        buttonBox = QDialogButtonBox(
+            QDialogButtonBox.Ok | QDialogButtonBox.Cancel, Qt.Horizontal, self
+        )
         form.addRow(buttonBox)
         buttonBox.accepted.connect(dialog.accept)
         buttonBox.rejected.connect(dialog.reject)
@@ -119,15 +160,17 @@ class MainWindow(QMainWindow):
         listView = QListView(dialog)
         form.addRow(listView)
         model = QStandardItemModel(listView)
-        self.setWindowTitle('Choose group to remove')
+        self.setWindowTitle("Choose group to remove")
         # Those are going to be URLs taken from the database
         for item in [str(x) for x in range(100)]:
-              standardItem = QStandardItem(item)
-              standardItem.setCheckable(True)
-              model.appendRow(standardItem)
+            standardItem = QStandardItem(item)
+            standardItem.setCheckable(True)
+            model.appendRow(standardItem)
         listView.setModel(model)
 
-        buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, Qt.Horizontal, self)
+        buttonBox = QDialogButtonBox(
+            QDialogButtonBox.Ok | QDialogButtonBox.Cancel, Qt.Horizontal, self
+        )
         form.addRow(buttonBox)
         buttonBox.accepted.connect(dialog.accept)
         buttonBox.rejected.connect(dialog.reject)
@@ -143,7 +186,16 @@ class MainWindow(QMainWindow):
 
             print(selected)
     
-    def unimplementedButton(self):
+    def logoutCallback(self):
+        self.showLogin()
+
+    def viewAllCallback(self):
+        print("This action is yet to be implemented")
+
+    def viewGroupCallback(self):
+        print("This action is yet to be implemented")
+
+    def viewPopularCallback(self):
         print("This action is yet to be implemented")
 
     def exit_app(self):
