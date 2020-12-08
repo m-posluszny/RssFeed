@@ -1,5 +1,7 @@
 from gui.FormView import LoginView, RegisterView
 from gui.MainView import MainView
+from gui.ListerView import ListerView
+from libs.urlhandler import URLHandler
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (
     QMainWindow,
@@ -18,21 +20,32 @@ from PySide2.QtGui import QStandardItemModel, QStandardItem
 
 
 class MainWindow(QMainWindow):
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1fc6c33591e2200e9c6f832a429f7187267520f6
     def __init__(self):
         super(MainWindow, self).__init__()
         self.setWindowTitle("RSS Feed")
         self.setGeometry(300, 300, 440, 640)
+<<<<<<< HEAD
         self.center()
+=======
+        self.setContentsMargins(5, 5, 5, 5)
+>>>>>>> 1fc6c33591e2200e9c6f832a429f7187267520f6
         self.__toolBar = self.menuBar()
         self.showLogin()
         self.show()
 
+<<<<<<< HEAD
     def center(self):
         qRect = self.frameGeometry()
         centerPoint = QDesktopWidget().availableGeometry().center()
         qRect.moveCenter(centerPoint)
         self.move(qRect.topLeft())
 
+=======
+>>>>>>> 1fc6c33591e2200e9c6f832a429f7187267520f6
     def showLogin(self):
         self.__toolBar.setVisible(False)
         self._login_view = LoginView(self)
@@ -110,82 +123,39 @@ class MainWindow(QMainWindow):
 
         if ok:
             # Here we use URL manager to add this into the database
-            print(text)
+            urlh = URLHandler()
+            if urlh.stringIsURL(text):
+                print(text)
+            else:
+                print('it\'s not a url')
 
-    # TODO Doubleclick should select/deselect not change value, regex on url names
+
     def removeURLCallback(self):
-        dialog = QDialog(parent=self)
-        form = QFormLayout(dialog)
-        form.addRow(QLabel("List of URLs"))
-        listView = QListView(dialog)
-        form.addRow(listView)
-        model = QStandardItemModel(listView)
-        self.setWindowTitle("Choose URL to remove")
-        # Those are going to be URLs taken from the database
-        for item in [str(x) for x in range(10)]:
-            standardItem = QStandardItem(item)
-            standardItem.setCheckable(True)
-            model.appendRow(standardItem)
-        listView.setModel(model)
+        prompt = 'List of URLs'
+        title = 'Choose URL to remove'
+        data = [str(x) for x in range(10)]
+        ls = ListerView(prompt, title, data, self)
 
-        buttonBox = QDialogButtonBox(
-            QDialogButtonBox.Ok | QDialogButtonBox.Cancel, Qt.Horizontal, self
-        )
-        form.addRow(buttonBox)
-        buttonBox.accepted.connect(dialog.accept)
-        buttonBox.rejected.connect(dialog.reject)
-
-        if dialog.exec_() == QDialog.Accepted:
-            selected = []
-            model = listView.model()
-            i = 0
-            while model.item(i):
-                if model.item(i).checkState():
-                    selected.append(model.item(i).text())
-                i += 1
-
-            print(selected)
+        if ls.exec_():
+            print(ls.getResults())
 
     def addGroupCallback(self):
-        text, ok = QInputDialog.getText(self, "Group URL", "Enter group name: ")
+        text, ok = QInputDialog.getText(
+            self, "Group URL", "Enter group name: ")
 
         if ok:
             # Here we use GroupManager to add this into the database
             print(text)
 
     def removeGroupCallback(self):
-        dialog = QDialog(parent=self)
-        form = QFormLayout(dialog)
-        form.addRow(QLabel("List of Groups"))
-        listView = QListView(dialog)
-        form.addRow(listView)
-        model = QStandardItemModel(listView)
-        self.setWindowTitle("Choose group to remove")
-        # Those are going to be URLs taken from the database
-        for item in [str(x) for x in range(100)]:
-            standardItem = QStandardItem(item)
-            standardItem.setCheckable(True)
-            model.appendRow(standardItem)
-        listView.setModel(model)
+        prompt = 'List of Groups'
+        title = 'Choose group to remove'
+        data = [str(x) for x in range(100)]
+        ls = ListerView(prompt, title, data, self)
 
-        buttonBox = QDialogButtonBox(
-            QDialogButtonBox.Ok | QDialogButtonBox.Cancel, Qt.Horizontal, self
-        )
-        form.addRow(buttonBox)
-        buttonBox.accepted.connect(dialog.accept)
-        buttonBox.rejected.connect(dialog.reject)
-
-        if dialog.exec_() == QDialog.Accepted:
-            selected = []
-            model = listView.model()
-            i = 0
-            while model.item(i):
-                if model.item(i).checkState():
-                    selected.append(model.item(i).text())
-                i += 1
-
-            print(selected)
-    
+        if ls.exec_():
+            print(ls.getResults())
+            
     def logoutCallback(self):
         self.showLogin()
 
