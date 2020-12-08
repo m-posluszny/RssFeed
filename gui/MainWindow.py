@@ -74,8 +74,8 @@ class MainWindow(QMainWindow):
         if ok:
             # Here we use URL manager to add this into the database
             print(text)
-    # TODO Doubleclick should select/deselect not change value, regex on url names
 
+    # TODO Regex on url names
     def removeURLCallback(self):
         prompt = 'List of URLs'
         title = 'Choose URL to remove'
