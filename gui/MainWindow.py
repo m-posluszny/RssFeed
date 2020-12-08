@@ -1,6 +1,7 @@
 from gui.FormView import LoginView, RegisterView
 from gui.MainView import MainView
 from gui.ListerView import ListerView
+from libs.urlhandler import URLHandler
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QMainWindow, QAction, QDialog, QInputDialog, QFormLayout, QLabel, QListView, QApplication, QDialogButtonBox, QPushButton
 from PySide2.QtGui import QStandardItemModel, QStandardItem
@@ -73,9 +74,13 @@ class MainWindow(QMainWindow):
 
         if ok:
             # Here we use URL manager to add this into the database
-            print(text)
+            urlh = URLHandler()
+            if urlh.stringIsURL(text):
+                print(text)
+            else:
+                print('it\'s not a url')
 
-    # TODO Regex on url names
+
     def removeURLCallback(self):
         prompt = 'List of URLs'
         title = 'Choose URL to remove'
@@ -101,9 +106,6 @@ class MainWindow(QMainWindow):
 
         if ls.exec_():
             print(ls.getResults())
-
-    def unimplementedButton(self):
-        print("This action is yet to be implemented")
 
     def exit_app(self):
         self.close()
