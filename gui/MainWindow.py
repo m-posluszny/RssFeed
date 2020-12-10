@@ -26,9 +26,11 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("RSS Feed")
         self.setGeometry(300, 300, 440, 640)
         self.center()
+        self.setContentsMargins(5, 5, 5, 5)
         self.__toolBar = self.menuBar()
         self.showLogin()
         self.show()
+
 
     def center(self):
         qRect = self.frameGeometry()
