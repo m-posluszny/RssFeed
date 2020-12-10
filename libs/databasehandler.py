@@ -1,43 +1,38 @@
-import mysql.connector
+import plyvel
 
 
 class DatabaseHandler:
+    actualDatabase = None
+
+    def __createDatabase():
+        DatabaseHandler.actualDatabase = plyvel.DB('/tmp/testdb/', create_if_missing=True)
+
+    @property
+    def databaseOnline(self):
+        return not DatabaseHandler.actualDatabase.closed
 
     def __init__(self):
-        self.mydb = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="briefly",
-        database="mydatabase",
-            )
-        self.tables = {
-            "user_credentials":["username","password"],
-            "user_data":["username","url","url_group"]
-        }
-        self.cursor = self.mydb.cursor()
+        if DatabaseHandler.actualDatabase == None:
+            DatabaseHandler.__createDatabase()
 
-    # zapisanie bazy
-    def save_base(self):
-        self.cursor.commit()
-        self.cursor.close()
-        
-    # usuwanie kolumny z tabeli
+    def addEntry(self, key, value):
+        db = DatabaseHandler.actualDatabase
 
-    def delete_row(self,table, values):
-        sqlQuery ="DELETE FROM {table} WHERE  = {} AND  ;"
-        self.cursor.execute(sqlQuery)
-        self.cursor.commit()
-        self.cursor.close()
-        
-    # dodawanie kolumny do tabeli
-    def add_row(self,table, values):
-        columns_str=", ".join(self.tables[table])
-        value_str=", ".join(values)
-        sqlQuery = "INSERT INTO {table} ({colums_str}) VALUES({value_str}) "
-        self.cursor.execute(sqlQuery)
-        self.cursor.commit()
-        self.cursor.close()
-        
-    #sortowane danych
-    def sort():
-        ... 
+        if isinstance(key, str):
+            key = key.encode()
+            assert(isinstance(key, bytes))
+
+        if isinstance(value, str):
+            value = value.encode()
+            assert(isinstance(value, bytes))
+
+        db.put(key, value)
+
+    def getEntry(self, key):
+        db = DatabaseHandler.actualDatabase
+
+        if isinstance(key, str):
+            key = key.encode()
+            assert(isinstance(key, bytes))
+
+        return db.get(key)
