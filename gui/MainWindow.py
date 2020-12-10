@@ -20,32 +20,21 @@ from PySide2.QtGui import QStandardItemModel, QStandardItem
 
 
 class MainWindow(QMainWindow):
-<<<<<<< HEAD
-=======
-
->>>>>>> 1fc6c33591e2200e9c6f832a429f7187267520f6
     def __init__(self):
         super(MainWindow, self).__init__()
         self.setWindowTitle("RSS Feed")
         self.setGeometry(300, 300, 440, 640)
-<<<<<<< HEAD
         self.center()
-=======
-        self.setContentsMargins(5, 5, 5, 5)
->>>>>>> 1fc6c33591e2200e9c6f832a429f7187267520f6
         self.__toolBar = self.menuBar()
         self.showLogin()
         self.show()
 
-<<<<<<< HEAD
     def center(self):
         qRect = self.frameGeometry()
         centerPoint = QDesktopWidget().availableGeometry().center()
         qRect.moveCenter(centerPoint)
         self.move(qRect.topLeft())
 
-=======
->>>>>>> 1fc6c33591e2200e9c6f832a429f7187267520f6
     def showLogin(self):
         self.__toolBar.setVisible(False)
         self._login_view = LoginView(self)
