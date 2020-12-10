@@ -1,5 +1,5 @@
 import plyvel
-
+import os 
 
 class DatabaseHandler:
     actualDatabase = None
@@ -7,7 +7,9 @@ class DatabaseHandler:
     # TODO(mateusz): Read about cross platform home directory and use it to create
     # the database
     def __createDatabase():
-        DatabaseHandler.actualDatabase = plyvel.DB('/tmp/testdb/', create_if_missing=True)
+        if not os.path.exists('./tmp/'):
+            os.makedirs('./tmp/')
+        DatabaseHandler.actualDatabase = plyvel.DB('./tmp/testdb/', create_if_missing=True)
 
     @property
     def databaseOnline(self):
