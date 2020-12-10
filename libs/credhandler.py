@@ -13,6 +13,10 @@ class CredentialsHandler:
         self.__username = username
         self.__password = bytes_passwd
         self.__dbHandler = None
+
+    @property
+    def password(self):
+        return self.__password
     
     def doesUserExist(self):
         result = None #obsługa tego będzie musiała być dokładniejsza, sprawdzac czy połączenie moze byc nawiązane
@@ -28,7 +32,6 @@ class CredentialsHandler:
     def encryptCredentials(self):
         hasher = sha1(self.__password)
         self.__password = hasher.hexdigest()
-        print(self.__password)
 
     def areCredValid(self):
         # Password has to encrypted by this point
