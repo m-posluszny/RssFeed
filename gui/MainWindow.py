@@ -20,17 +20,14 @@ from PySide2.QtGui import QStandardItemModel, QStandardItem
 
 
 class MainWindow(QMainWindow):
-
     def __init__(self):
         super(MainWindow, self).__init__()
         self.setWindowTitle("RSS Feed")
         self.setGeometry(300, 300, 440, 640)
         self.center()
-        self.setContentsMargins(5, 5, 5, 5)
         self.__toolBar = self.menuBar()
         self.showLogin()
         self.show()
-
 
     def center(self):
         qRect = self.frameGeometry()
