@@ -16,3 +16,17 @@ class TestURLHandler(unittest.TestCase):
         rssh = RSSHandler()
 
         self.assertEqual(rssh.fetchIsSuccess(), False)
+
+    def test_correct_article_print(self):
+        rssh = RSSHandler()
+
+        rssh.retriveDataFromURL('https://xkcd.com/rss.xml')
+        self.assertEqual(rssh.fetchIsSuccess(), True)
+
+        rssh.parseXML()
+        
+        a = rssh.returnArticles()
+        self.assertNotEqual(len(a), 0)
+
+        s = '{}'.format(a[0])
+        self.assertNotEqual(len(s), 0)
