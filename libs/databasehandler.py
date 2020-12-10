@@ -4,6 +4,8 @@ import plyvel
 class DatabaseHandler:
     actualDatabase = None
 
+    # TODO(mateusz): Read about cross platform home directory and use it to create
+    # the database
     def __createDatabase():
         DatabaseHandler.actualDatabase = plyvel.DB('/tmp/testdb/', create_if_missing=True)
 
@@ -36,3 +38,12 @@ class DatabaseHandler:
             assert(isinstance(key, bytes))
 
         return db.get(key)
+
+    def deleteEntry(self, key):
+        db = DatabaseHandler.actualDatabase
+
+        if isinstance(key, str):
+            key = key.encode()
+            assert(isinstance(key, bytes))
+
+        return db.delete(key)

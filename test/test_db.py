@@ -3,13 +3,10 @@ from libs.databasehandler import DatabaseHandler
 
 class TestURLHandler(unittest.TestCase):
 
-    def test_empty_handler(self):
+    def test_basic_operations(self):
         db = DatabaseHandler()
 
         self.assertEqual(db.databaseOnline, True)
-
-    def test_inserting_values(self):
-        db = DatabaseHandler()
 
         db.addEntry('testkey', 'testvalue')
 
@@ -18,5 +15,28 @@ class TestURLHandler(unittest.TestCase):
         res = db.getEntry('testkey')
         self.assertEqual(res, b'testvalue')
 
+        res = db.deleteEntry('testkey')
+        self.assertEqual(res, None)
+
         res = db.getEntry('nonvalidtestkey')
         self.assertEqual(res, None)
+
+    def test_json_storing(self):
+        import json
+        db = DatabaseHandler()
+
+        self.assertEqual(db.databaseOnline, True)
+
+        l = [str(i) for i in range(100)]
+        asStr = json.dumps(l)
+
+        db.addEntry('testkey', asStr)
+
+        self.assertEqual(db.databaseOnline, True)
+
+        res = db.getEntry('testkey')
+        self.assertNotEqual(res, None)
+
+        asList = json.loads(res)
+
+        self.assertEqual(asList, l)
