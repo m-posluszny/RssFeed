@@ -1,3 +1,4 @@
 PySide2
 pyside-material
 requests
+mysql-connector-python
