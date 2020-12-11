@@ -4,16 +4,16 @@ from libs.databasehandler import DatabaseHandler
 class TestURLHandler(unittest.TestCase):
 
     def test_basic_operations(self):
-        db = DatabaseHandler()
+        db = DatabaseHandler(db_path = "pytests/", dbIsTemp = True)
 
         self.assertEqual(db.databaseOnline, True)
 
-        db.addEntry('testkey', 'testvalue')
+        db.addEntry('testkey', '\"testvalue\"')
 
         self.assertEqual(db.databaseOnline, True)
 
         res = db.getEntry('testkey')
-        self.assertEqual(res, b'testvalue')
+        self.assertEqual(res, "testvalue")
 
         res = db.deleteEntry('testkey')
         self.assertEqual(res, None)
@@ -23,7 +23,7 @@ class TestURLHandler(unittest.TestCase):
 
     def test_json_storing(self):
         import json
-        db = DatabaseHandler()
+        db = DatabaseHandler(db_path = "pytests/", dbIsTemp = True)
 
         self.assertEqual(db.databaseOnline, True)
 
@@ -37,6 +37,4 @@ class TestURLHandler(unittest.TestCase):
         res = db.getEntry('testkey')
         self.assertNotEqual(res, None)
 
-        asList = json.loads(res)
-
-        self.assertEqual(asList, l)
+        self.assertEqual(res, l)
