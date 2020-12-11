@@ -7,17 +7,19 @@ from PySide2.QtWidgets import (
     QDesktopWidget,
     QAction,
     QInputDialog,
-    QTabWidget
+    QTabWidget,
+    QVBoxLayout
 )
-
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.setWindowTitle("RSS Feed")
-        self.setGeometry(300, 300, 440, 640)
+        self.setGeometry(300, 300, 530, 640)
+        self.setMinimumSize(530,450)
         self.center()
         self.__toolBar = self.menuBar()
+        self.loadMenubar()
         self.showLogin()
         self.show()
 
@@ -37,11 +39,11 @@ class MainWindow(QMainWindow):
         self._register_view = RegisterView(self)
         self.setCentralWidget(self._register_view)
 
-    def showMainView(self, user_data):
+    def showFeedView(self, user_data):
+        self.__toolBar.setVisible(True)
         self._tab = QTabWidget(self)
         self._tab.setTabsClosable(True)
         self._tab.tabCloseRequested.connect(self.removeTab)
-        self.loadMenubar()
         self.viewGroupCallback("All")
         self.setCentralWidget(self._tab)
     
@@ -145,7 +147,15 @@ class MainWindow(QMainWindow):
         print("This action is yet to be implemented")
 
     def viewGroupCallback(self,title):
+        from libs.databasehandler import DatabaseHandler
+
         article_view = FeedView(title,self)
+        dbh = DatabaseHandler()
+        entry = dbh.getEntry('admin2')
+
+        for article in entry['urls'][0]['articles']:
+            article_view.append_message(entry['urls'][0]['rss_link'], article['link'], article['title'], article['desc'])
+
         self._tab.addTab(article_view,title)
 
     def viewPopularCallback(self):

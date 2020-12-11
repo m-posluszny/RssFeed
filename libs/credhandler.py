@@ -50,14 +50,14 @@ class CredentialsHandler:
                             {
                                 "title": "Wonder Woman 1984",
                                 "link": "https://xkcd.com/2396/",
-                                "desc": "..........",
+                                "desc": r'<img src="https://imgs.xkcd.com/comics/wonder_woman_1984.png" title="\'Wait, why would you think a movie set in 1984 would do drive-ins as a retro promotion?\' \'You know, 80s stuff. Drive-in movies. Britney Spears doing the hustle. Elvis going on Ed Sullivan and showing off his pog collection.\' \'What year were you born, again?\'" alt="\'Wait, why would you think a movie set in 1984 would do drive-ins as a retro promotion?\' \'You know, 80s stuff. Drive-in movies. Britney Spears doing the hustle. Elvis going on Ed Sullivan and showing off his pog collection.\' \'What year were you born, again?\'" />',
                                 "pub_date": "Wed, 09 Dec 2020 05:00:00 -0000",
                                 "seen": False,
                                 },
                             {
                                 'title': 'Covid Precaution Level',
                                 'link': 'https://xkcd.com/2395/',
-                                'desc': '..........',
+                                'desc': r'<img src="https://imgs.xkcd.com/comics/covid_precaution_level.png" title="It\'s frustrating to calibrate your precautions when there\'s only one kind of really definitive feedback you can get, you can only get it once, and when you do it\'s too late." alt="It\'s frustrating to calibrate your precautions when there\'s only one kind of really definitive feedback you can get, you can only get it once, and when you do it\'s too late." />',
                                 'pub_date': 'Mon, 07 Dec 2020 05:00:00 -0000',
                                 'seen': True,
                                 },

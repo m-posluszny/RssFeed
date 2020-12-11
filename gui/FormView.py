@@ -1,7 +1,7 @@
 from libs.credhandler import CredentialsHandler
 from PySide2.QtCore import Qt
-from PySide2.QtGui import QFont, QPalette, QColor
-from PySide2.QtWidgets  import QLabel, QWidget, QLineEdit, QVBoxLayout, QPushButton
+from PySide2.QtGui import QFont, QPalette, QColor, QKeySequence, QShortcutEvent
+from PySide2.QtWidgets  import QLabel, QShortcut, QWidget, QLineEdit, QVBoxLayout, QPushButton
 
 class FormView(QWidget):
     
@@ -24,6 +24,7 @@ class FormView(QWidget):
         subtext_font = QFont("Arial", 10)
         self._action_button = QPushButton("", self)
         self._action_button.clicked.connect(self.onConfirmPress)
+        self._action_button.setAutoDefault(True)
         self._subtext_label = QPushButton("",self)
         self._subtext_label.setMaximumHeight(10)
         self._subtext_label.setFlat(True)
@@ -50,7 +51,7 @@ class FormView(QWidget):
         self._form_layout.addStretch()
     
     def returnSuccesfulLogin(self,user_data):
-        self._parent.showMainView(user_data)
+        self._parent.showFeedView(user_data)
     
     def onConfirmPress(self,event):
         ...
@@ -73,14 +74,15 @@ class LoginView(FormView):
     def onConfirmPress(self,event):
         username = self._user_box.text()
         password = self._password_box.text()
-        credHandler = CredentialsHandler(username,password)
-        credHandler.encryptCredentials()
-        if credHandler.areCredValid():
-            #getUserArticles
-            user_data = []
-            self.returnSuccesfulLogin(user_data)
-        else:
-            self.displayErrorMessage()
+        if len(username) > 0 and len(password) > 0:
+            credHandler = CredentialsHandler(username,password)
+            credHandler.encryptCredentials()
+            if credHandler.areCredValid():
+                #getUserArticles
+                user_data = []
+                self.returnSuccesfulLogin(user_data)
+            else:
+                self.displayErrorMessage()
     
     def onLinkPress(self, event):
         self._parent.showRegister()
@@ -98,15 +100,16 @@ class RegisterView(FormView):
     def onConfirmPress(self,event):
         username = self._user_box.text()
         password = self._password_box.text()
-        credHandler = CredentialsHandler(username,password)
-        credHandler.encryptCredentials()
-        if not credHandler.doesUserExist():
-            #getUserArticles
-            credHandler.createUser()
-            user_data = []
-            self.returnSuccesfulLogin(user_data)
-        else:
-            self.displayErrorMessage()
+        if len(username) > 0 and len(password) > 0:
+            credHandler = CredentialsHandler(username,password)
+            credHandler.encryptCredentials()
+            if not credHandler.doesUserExist():
+                #getUserArticles
+                credHandler.createUser()
+                user_data = []
+                self.returnSuccesfulLogin(user_data)
+            else:
+                self.displayErrorMessage()
     
     def onLinkPress(self, event):
         self._parent.showLogin()
