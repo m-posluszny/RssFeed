@@ -1,3 +1,4 @@
+import json
 from hashlib import sha1
 from libs.databasehandler import DatabaseHandler
 
@@ -37,8 +38,9 @@ class CredentialsHandler:
         dbh = DatabaseHandler()
 
         value = { 'password': self.password }
+        value_bytes = json.dumps(value).encode()
 
-        result = dbh.addEntry(self.username, value)
+        result = dbh.addEntry(self.username, value_bytes)
         
     def encryptCredentials(self):
         hasher = sha1(self.__password)
