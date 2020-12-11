@@ -1,22 +1,14 @@
 from gui.FormView import LoginView, RegisterView
-from gui.MainView import MainView
+from gui.FeedView import FeedView
 from gui.ListerView import ListerView
 from libs.urlhandler import URLHandler
-from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (
     QMainWindow,
     QDesktopWidget,
     QAction,
-    QDialog,
     QInputDialog,
-    QFormLayout,
-    QLabel,
-    QListView,
-    QApplication,
-    QDialogButtonBox,
-    QPushButton,
+    QTabWidget
 )
-from PySide2.QtGui import QStandardItemModel, QStandardItem
 
 
 class MainWindow(QMainWindow):
@@ -46,9 +38,18 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self._register_view)
 
     def showMainView(self, user_data):
-        self._main_view = MainView(self)
+        self._tab = QTabWidget(self)
+        self._tab.setTabsClosable(True)
+        self._tab.tabCloseRequested.connect(self.removeTab)
         self.loadMenubar()
-        self.setCentralWidget(self._main_view)
+        self.viewGroupCallback("All")
+        self.setCentralWidget(self._tab)
+    
+    def removeTab(self, index):
+        widget = self._tab.widget(index)
+        if widget is not None:
+            widget.deleteLater()
+        self._tab.removeTab(index)
 
     def loadMenubar(self):
         bar = self.__toolBar
@@ -56,7 +57,7 @@ class MainWindow(QMainWindow):
         user = bar.addMenu("App")
         manageUrls = bar.addMenu("Manage URLs")
         manageGroups = bar.addMenu("Manage Groups")
-        manageViews = bar.addMenu("View")
+        self.manageViews = bar.addMenu("View")
 
         addURLAction = QAction("Add URL", self)
         addURLAction.setShortcut("Ctrl-N")
@@ -79,22 +80,9 @@ class MainWindow(QMainWindow):
 
         manageGroups.addAction(addGroupAction)
         manageGroups.addAction(removeGroupAction)
-
-        viewAllAction = QAction("View All", self)
-        # viewAction.setShortcut("Ctrl-Shift-N")
-        viewAllAction.triggered.connect(self.viewAllCallback)
-
-        viewGroupAction = QAction("View Group", self)
-        # viewGroupAction.setShortcut("Ctrl-Shift-P")
-        viewGroupAction.triggered.connect(self.viewGroupCallback)
-
-        viewPopularAction = QAction("View Popular", self)
-        # viewPopularAction.setShortcut("Ctrl-Shift-P")
-        viewPopularAction.triggered.connect(self.viewPopularCallback)
-
-        manageViews.addAction(viewAllAction)
-        manageViews.addAction(viewGroupAction)
-        manageViews.addAction(viewPopularAction)
+        groups = ["All","Science","Politics"]
+        for group in groups:
+            self.addGroupToBar(group)
 
         exitAction = QAction("Quit", self)
         exitAction.setShortcut("Ctrl-X")
@@ -106,6 +94,11 @@ class MainWindow(QMainWindow):
         user.addAction(exitAction)
         user.addAction(logoutAction)
 
+    def addGroupToBar(self,group_name):
+        group_action = QAction(group_name, self)
+        group_action.triggered.connect(lambda: self.viewGroupCallback(group_name))
+        self.manageViews.addAction(group_action)
+    
     # TODO Move all menubar things to class MenuBar in gui
     def addURLCallback(self):
         text, ok = QInputDialog.getText(self, "Add URL", "Paste URL: ")
@@ -151,8 +144,9 @@ class MainWindow(QMainWindow):
     def viewAllCallback(self):
         print("This action is yet to be implemented")
 
-    def viewGroupCallback(self):
-        print("This action is yet to be implemented")
+    def viewGroupCallback(self,title):
+        article_view = FeedView(title,self)
+        self._tab.addTab(article_view,title)
 
     def viewPopularCallback(self):
         print("This action is yet to be implemented")
