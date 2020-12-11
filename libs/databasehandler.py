@@ -62,3 +62,8 @@ class DatabaseHandler:
             assert(isinstance(key, bytes))
 
         return DatabaseHandler.actualDatabase.delete(key)
+    
+    def printEntry(self, key):
+        res = self.getEntry(key)
+
+        print(key, res)

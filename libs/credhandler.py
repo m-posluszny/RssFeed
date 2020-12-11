@@ -3,6 +3,8 @@ from hashlib import sha1
 from libs.databasehandler import DatabaseHandler
 
 class CredentialsHandler:
+    lastUsername = ''
+
     def __init__(self, username, password):
 
         bytes_passwd = password
@@ -15,6 +17,8 @@ class CredentialsHandler:
         self.__username = username
         self.__password = bytes_passwd
         self.__dbHandler = None
+
+        CredentialsHandler.lastUsername = username
 
     @property
     def password(self):
