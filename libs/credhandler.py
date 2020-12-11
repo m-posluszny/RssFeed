@@ -37,11 +37,42 @@ class CredentialsHandler:
     def createUser(self):
         dbh = DatabaseHandler()
 
-        value = { 'password': self.password }
+        # NOTE(mateusz): as a testing measure each new user is subscribed to xkcd's rss
+        value = { 
+                'password': self.password,
+                'urls': [
+                    {
+                        'actual_url': 'https://xkcd.com/rss.xml',
+                        'rss_title': 'xkcd.com',
+                        'rss_link': 'https://xkcd.com/',
+                        'rss_desc': 'xkcd.com: A webcomic of romance and math humor.',
+                        'articles': [
+                            {
+                                "title": "Wonder Woman 1984",
+                                "link": "https://xkcd.com/2396/",
+                                "desc": "..........",
+                                "pub_date": "Wed, 09 Dec 2020 05:00:00 -0000",
+                                "seen": False,
+                                },
+                            {
+                                'title': 'Covid Precaution Level',
+                                'link': 'https://xkcd.com/2395/',
+                                'desc': '..........',
+                                'pub_date': 'Mon, 07 Dec 2020 05:00:00 -0000',
+                                'seen': True,
+                                },
+                            ],
+                        },
+                    ],
+                'groups': {
+                    'All': [ 0 ],
+                    },
+                }
+
         value_bytes = json.dumps(value).encode()
 
         result = dbh.addEntry(self.username, value_bytes)
-        
+
     def encryptCredentials(self):
         hasher = sha1(self.__password)
         self.__password = hasher.hexdigest()
