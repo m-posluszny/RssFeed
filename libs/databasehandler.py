@@ -10,17 +10,20 @@ class DatabaseHandler:
 
     # TODO(mateusz): Read about cross platform home directory and use it to create
     # the database
+    @staticmethod
     def __createDatabase(path):
         if not os.path.exists(path):
             os.makedirs(path)
         DatabaseHandler.actualDatabase = plyvel.DB(path, create_if_missing=True)
         DatabaseHandler.actualDatabasePath = path
 
-    def __destroyDatabase():
+    @staticmethod
+    def destroyDatabase():
         del DatabaseHandler.actualDatabase
         plyvel.destroy_db(DatabaseHandler.actualDatabasePath)
         DatabaseHandler.actualDatabase = None
         DatabaseHandler.actualDatabasePath = ''
+        DatabaseHandler.dbIsTemp = False
 
     @property
     def databaseOnline(self):
@@ -31,13 +34,7 @@ class DatabaseHandler:
             DatabaseHandler.dbIsTemp = dbIsTemp
             DatabaseHandler.__createDatabase(db_path)
 
-    def __del__(self):
-        if DatabaseHandler.dbIsTemp:
-            DatabaseHandler.__destroyDatabase()
-
     def addEntry(self, key, value):
-        db = DatabaseHandler.actualDatabase
-
         if isinstance(key, str):
             key = key.encode()
             assert(isinstance(key, bytes))
@@ -46,26 +43,22 @@ class DatabaseHandler:
             value = value.encode()
             assert(isinstance(value, bytes))
 
-        db.put(key, value)
+        DatabaseHandler.actualDatabase.put(key, value)
 
     def getEntry(self, key):
-        db = DatabaseHandler.actualDatabase
-
         if isinstance(key, str):
             key = key.encode()
             assert(isinstance(key, bytes))
 
-        value = db.get(key)
+        value = DatabaseHandler.actualDatabase.get(key)
         if value == None:
             return None
         else:
             return json.loads(value)
 
     def deleteEntry(self, key):
-        db = DatabaseHandler.actualDatabase
-
         if isinstance(key, str):
             key = key.encode()
             assert(isinstance(key, bytes))
 
-        return db.delete(key)
+        return DatabaseHandler.actualDatabase.delete(key)

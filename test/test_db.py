@@ -21,6 +21,8 @@ class TestURLHandler(unittest.TestCase):
         res = db.getEntry('nonvalidtestkey')
         self.assertEqual(res, None)
 
+        DatabaseHandler.destroyDatabase()
+
     def test_json_storing(self):
         import json
         db = DatabaseHandler(db_path = "pytests/", dbIsTemp = True)
@@ -38,3 +40,5 @@ class TestURLHandler(unittest.TestCase):
         self.assertNotEqual(res, None)
 
         self.assertEqual(res, l)
+
+        DatabaseHandler.destroyDatabase()

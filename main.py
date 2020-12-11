@@ -11,7 +11,7 @@ def sigint_handler(*args):
     sys.stderr.write('\r')
     QApplication.quit()
 
-def exit_handler()
+def exit_handler():
     ...
 #    from libs.databasehandler import DatabaseHandler
 #
