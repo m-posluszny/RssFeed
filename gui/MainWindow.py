@@ -1,13 +1,20 @@
+from PySide2 import QtWidgets
 from gui.FormView import LoginView, RegisterView
 from gui.FeedView import FeedView
+from gui.ArticleBox import ArticleBox
 from gui.ListerView import ListerView
 from libs.urlhandler import URLHandler
+from libs.databasehandler import DatabaseHandler
 from PySide2.QtWidgets import (
     QMainWindow,
     QDesktopWidget,
     QAction,
     QInputDialog,
-    QTabWidget
+    QTabWidget,
+    QTextEdit,
+    QSplitter,
+    QVBoxLayout,
+    QWidget
 )
 
 
@@ -15,7 +22,8 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.setWindowTitle("RSS Feed")
-        self.setGeometry(300, 300, 440, 640)
+        self.setGeometry(300, 300, 850, 500)
+        self.setMinimumSize(850,500)
         self.center()
         self.__toolBar = self.menuBar()
         self.showLogin()
@@ -37,53 +45,77 @@ class MainWindow(QMainWindow):
         self._register_view = RegisterView(self)
         self.setCentralWidget(self._register_view)
 
-    def showMainView(self, user_data):
-        self._tab = QTabWidget(self)
-        self._tab.setTabsClosable(True)
-        self._tab.tabCloseRequested.connect(self.removeTab)
-        self.loadMenubar()
-        self.viewGroupCallback("All")
-        self.setCentralWidget(self._tab)
+    def showFeedView(self, user_data):
+        self.__toolBar.setVisible(True)
+        self.mainView = QWidget()
+        self.group_view = QTextEdit()
+        self.feed_view = FeedView()
+        self.article_box = ArticleBox()
+        self.feed_view.selectionModel().selectionChanged.connect(self.set_article)
+        dbh = DatabaseHandler()
+        entry = dbh.getEntry('admin2') #user
+        for url in entry['urls']:
+            site = url["rss_title"]
+            for article in url["articles"]:
+                date = article["pub_date"]
+                title = article["title"]
+                desc = article["desc"]
+                seen = article["seen"]
+                link = article["link"]
+                self.feed_view.append_message(site,title,desc,date,link,seen)
+        article = entry['urls'][0]['articles'][0]
+        #setfocustofirst
+        self.article_box.set_data(entry['urls'][0]['rss_link'], article['link'], article['title'], article['desc'])
+        self.__left_split = QSplitter()
+        self.__right_split = QSplitter()
+
+        self.__left_split.addWidget(self.group_view)
+        self.__left_split.addWidget(self.feed_view)
+        self.__left_split.setHandleWidth(4)
+        self.__right_split.addWidget(self.__left_split)
+        self.__right_split.addWidget(self.article_box)
+        self.__right_split.setHandleWidth(4)
+        self.__main_layout = QVBoxLayout()
+        self.__main_layout.addWidget(self.__right_split)
+        self.mainView.setLayout(self.__main_layout)
+        self.setCentralWidget(self.mainView)
     
-    def removeTab(self, index):
-        widget = self._tab.widget(index)
-        if widget is not None:
-            widget.deleteLater()
-        self._tab.removeTab(index)
+    def set_article(self,current):
+        row = row = [qmi.row() for qmi in self.feed_view.selectedIndexes()][0]
+        item = self.feed_view.model().item(row)
+        self.article_box.set_data(**item.article_bundle)
 
     def loadMenubar(self):
         bar = self.__toolBar
         bar.setVisible(True)
         user = bar.addMenu("App")
-        manageUrls = bar.addMenu("Manage URLs")
-        manageGroups = bar.addMenu("Manage Groups")
-        self.manageViews = bar.addMenu("View")
 
         addURLAction = QAction("Add URL", self)
-        addURLAction.setShortcut("Ctrl-N")
         addURLAction.triggered.connect(self.addURLCallback)
 
         removeURLAction = QAction("Remove URL", self)
-        removeURLAction.setShortcut("Ctrl-P")
         removeURLAction.triggered.connect(self.removeURLCallback)
-
-        manageUrls.addAction(addURLAction)
-        manageUrls.addAction(removeURLAction)
-
+        bar.addAction(addURLAction)
+        bar.addAction(removeURLAction)
+    
         addGroupAction = QAction("Add Group", self)
-        addGroupAction.setShortcut("Ctrl-Shift-N")
         addGroupAction.triggered.connect(self.addGroupCallback)
 
         removeGroupAction = QAction("Remove Group", self)
-        removeGroupAction.setShortcut("Ctrl-Shift-P")
         removeGroupAction.triggered.connect(self.removeGroupCallback)
+        
+        bar.addAction(addGroupAction)
+        bar.addAction(removeGroupAction)
+        
+        addUrlGroupAction = QAction("Add URL to Group", self)
+        addUrlGroupAction.triggered.connect(self.addGroupCallback)
 
-        manageGroups.addAction(addGroupAction)
-        manageGroups.addAction(removeGroupAction)
-        groups = ["All","Science","Politics"]
-        for group in groups:
-            self.addGroupToBar(group)
+        removeUrlGroupAction = QAction("Remove URL from Group", self)
+        removeUrlGroupAction.triggered.connect(self.removeGroupCallback)
 
+        bar.addAction(addUrlGroupAction)
+        bar.addAction(removeUrlGroupAction)
+    
         exitAction = QAction("Quit", self)
         exitAction.setShortcut("Ctrl-X")
         exitAction.triggered.connect(self.exit_app)
@@ -94,11 +126,7 @@ class MainWindow(QMainWindow):
         user.addAction(exitAction)
         user.addAction(logoutAction)
 
-    def addGroupToBar(self,group_name):
-        group_action = QAction(group_name, self)
-        group_action.triggered.connect(lambda: self.viewGroupCallback(group_name))
-        self.manageViews.addAction(group_action)
-    
+   
     # TODO Move all menubar things to class MenuBar in gui
     def addURLCallback(self):
         text, ok = QInputDialog.getText(self, "Add URL", "Paste URL: ")
@@ -145,7 +173,13 @@ class MainWindow(QMainWindow):
         print("This action is yet to be implemented")
 
     def viewGroupCallback(self,title):
+
         article_view = FeedView(title,self)
+        
+
+        for article in entry['urls'][0]['articles']:
+            article_view.append_message()
+
         self._tab.addTab(article_view,title)
 
     def viewPopularCallback(self):
