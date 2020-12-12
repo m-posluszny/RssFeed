@@ -32,6 +32,8 @@ class RSSHandler:
 
         # Channel has to contain <title>, <link>, <description> tags but other are optional 
         # Data for articles is contained inside <item> tags
+        # This is bad, I need to redo this one
+        rssTitle, rssLink, rssDesc = '', '', ''
         for child in channel:
             if child.tag == 'title':
                 rssTitle = child.text
