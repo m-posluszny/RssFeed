@@ -2,7 +2,7 @@ import PySide2
 from PySide2 import QtWidgets
 from PySide2.QtGui import QFont, QImage, QPixmap
 from PySide2.QtWidgets import (QLabel, QPushButton, QVBoxLayout,QFrame,QSizePolicy)
-from PySide2.QtCore import Qt
+from PySide2.QtCore import QSize, Qt
 from PySide2.QtWebEngineWidgets import QWebEngineView
 
 class ArticleBox(QFrame):
@@ -25,16 +25,14 @@ class ArticleBox(QFrame):
         self.__label = QLabel(parent=self)
         self.__label.setWordWrap(True)
         self.__label.setFont(__label_font)
-        self.__label_img = QLabel(parent=self)
-        self.__label_img.setSizePolicy(QSizePolicy.Preferred,QSizePolicy.Preferred)
-        self.__label_img.setAlignment(Qt.AlignCenter)
         self.__content_box=QWebEngineView()
+        self.__content_box.setContextMenuPolicy(Qt.NoContextMenu)
+        self.__content_box.setSizePolicy(QSizePolicy.MinimumExpanding,QSizePolicy.MinimumExpanding)
         self.__link_btn = QPushButton()
         self.__link_btn.setFlat(True)
         self.__layout.addWidget(self.__label)
         self.__layout.addWidget(self.__site)
         self.__layout.addWidget(self.__content_box)
-        self.__layout.addWidget(self.__label_img)
         self.__layout.addWidget(self.__link_btn, alignment=Qt.AlignCenter)
         self.setLayout(self.__layout)
         

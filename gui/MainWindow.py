@@ -2,6 +2,7 @@ from PySide2 import QtWidgets
 from PySide2.QtCore import QItemSelectionModel
 from gui.FormView import LoginView, RegisterView
 from gui.FeedView import FeedView
+from gui.GroupView import GroupView
 from gui.ArticleBox import ArticleBox
 from gui.ListerView import ListerView
 from libs.urlhandler import URLHandler
@@ -51,23 +52,14 @@ class MainWindow(QMainWindow):
     def showFeedView(self, user_data):
         self.__toolBar.setVisible(True)
         self.mainView = QWidget()
-        self.group_view = QTextEdit()
+        self.group_view = GroupView()
         self.feed_view = FeedView()
         self.article_box = ArticleBox()
         self.feed_view.selectionModel().selectionChanged.connect(self.set_article)
+        self.group_view.itemDoubleClicked.connect(self.set_group)
         dbh = DatabaseHandler()
-        entry = dbh.getEntry('admin2') #user
-        for url in entry['urls']:
-            site = url["rss_title"]
-            for article in url["articles"]:
-                date = article["pub_date"]
-                title = article["title"]
-                desc = article["desc"]
-                seen = article["seen"]
-                link = article["link"]
-                self.feed_view.append_message(site,title,desc,date,link,seen)
-        ix = self.feed_view.model().index(0, 0)
-        self.feed_view.selectionModel().setCurrentIndex(ix,QItemSelectionModel.SelectCurrent)
+        self.entry = dbh.getEntry('admin2') #
+        self.get_user_groups()
         self.__left_split = QSplitter()
         self.__right_split = QSplitter()
         self.__left_split.addWidget(self.group_view)
@@ -80,7 +72,32 @@ class MainWindow(QMainWindow):
         self.__main_layout.addWidget(self.__right_split)
         self.mainView.setLayout(self.__main_layout)
         self.setCentralWidget(self.mainView)
-    
+        
+    def get_user_groups(self):
+        group_dict = self.entry["groups"]
+        for group in group_dict:
+            indexes = group_dict[group]
+            urls = []
+            for index in indexes:
+                urls.append(self.entry['urls'][index]["actual_url"])
+            self.group_view.add_group(group,urls,indexes)
+       
+                
+    def set_group(self,item):
+        if item.rss_type == "group":
+            for index in item.url_indexes:
+                url = self.entry['urls'][index]
+                site = url["rss_title"]
+                for article in url["articles"]:
+                    date = article["pub_date"]
+                    title = article["title"]
+                    desc = article["desc"]
+                    seen = article["seen"]
+                    link = article["link"]
+                    self.feed_view.append_message(site,title,desc,date,link,seen)
+        ix = self.feed_view.model().index(0, 0)
+        self.feed_view.selectionModel().setCurrentIndex(ix,QItemSelectionModel.SelectCurrent)
+
     def set_article(self,current):
         row = row = [qmi.row() for qmi in self.feed_view.selectedIndexes()][0]
         item = self.feed_view.model().item(row)
