@@ -18,3 +18,7 @@ class Article:
     @property
     def content(self):
         return self.__header.desc
+
+    @property
+    def pubDate(self):
+        return self.__date

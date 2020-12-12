@@ -74,6 +74,34 @@ class URLHandler:
 
                 return
 
+    def appendDownloadedArticles(url, articles):
+        dbh = DatabaseHandler()
+
+        username = CredentialsHandler.lastUsername
+        res = dbh.getEntry(username)
+
+        for i, entry in enumerate(res['urls']):
+            if entry['actual_url'] == url:
+                for nart in articles:
+                    addThisUrl = True
+                    for eart in entry['articles']:
+                        if eart['title'] == nart.title:
+                            addThisUrl = False
+                            break
+                    
+                    if addThisUrl:
+                        nentry = {
+                                "title": nart.title,
+                                "link": nart.link,
+                                "desc": nart.content,
+                                "pub_date": nart.pubDate,
+                                "seen": False,
+                                }
+
+                        entry['articles'].append(nentry)
+
+        dbh.addEntry(username, json.dumps(res))
+
     def getMostPopularURLs():
         pass
 
