@@ -5,6 +5,7 @@ from gui.FeedView import FeedView
 from gui.ArticleBox import ArticleBox
 from gui.ListerView import ListerView
 from libs.urlhandler import URLHandler
+from libs.credhandler import CredentialsHandler
 from libs.databasehandler import DatabaseHandler
 from PySide2.QtCore import QItemSelectionModel
 from PySide2.QtWidgets import (
@@ -56,7 +57,7 @@ class MainWindow(QMainWindow):
         self.article_box = ArticleBox()
         self.feed_view.selectionModel().selectionChanged.connect(self.set_article)
         dbh = DatabaseHandler()
-        entry = dbh.getEntry('admin2') #user
+        entry = dbh.getEntry(CredentialsHandler.lastUsername)
         for url in entry['urls']:
             site = url["rss_title"]
             for article in url["articles"]:
@@ -130,13 +131,12 @@ class MainWindow(QMainWindow):
    
     # TODO Move all menubar things to class MenuBar in gui
     def addURLCallback(self):
-        text, ok = QInputDialog.getText(self, "Add URL", "Paste URL: ")
+        res, ok = QInputDialog.getText(self, "Add URL", "Paste URL: ")
 
         if ok:
-            # Here we use URL manager to add this into the database
             urlh = URLHandler()
-            if urlh.stringIsURL(text):
-                print(text)
+            if urlh.stringIsURL(res):
+                URLHandler.addURL(res)
             else:
                 print('it\'s not a url')
 
@@ -144,11 +144,16 @@ class MainWindow(QMainWindow):
     def removeURLCallback(self):
         prompt = 'List of URLs'
         title = 'Choose URL to remove'
-        data = [str(x) for x in range(10)]
+
+        db = DatabaseHandler()
+        entries = db.getEntry(CredentialsHandler.lastUsername)
+        data = [url['actual_url'] for url in entries['urls']]
         ls = ListerView(prompt, title, data, self)
 
         if ls.exec_():
-            print(ls.getResults())
+            reslist = ls.getResults()
+            for res in reslist:
+                URLHandler.removeURL(res)
 
     def addGroupCallback(self):
         text, ok = QInputDialog.getText(

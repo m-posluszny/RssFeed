@@ -52,7 +52,6 @@ class URLHandler:
                 res['urls'].pop(i)
 
                 for j, group in enumerate(res['groups']):
-                    print(res['groups'][group])
                     if i in res['groups'][group]:
                         res['groups'][group].remove(i)
 
