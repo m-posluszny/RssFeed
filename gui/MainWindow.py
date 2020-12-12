@@ -103,6 +103,7 @@ class MainWindow(QMainWindow):
             urlh = URLHandler()
             if urlh.stringIsURL(res):
                 URLHandler.addURL(res)
+                URLHandler.addURLToGroup(res, 'All')
             else:
                 print('it\'s not a url')
 

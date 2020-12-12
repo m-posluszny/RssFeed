@@ -53,7 +53,9 @@ class URLHandler:
 
                 for j, group in enumerate(res['groups']):
                     if i in res['groups'][group]:
-                        res['groups'][group].remove(i)
+                        hl = res['groups'][group][:i]
+                        hr = list(map(lambda x: x - 1, res['groups'][group][i + 1:]))
+                        res['groups'][group] = hl + hr
 
                 dbh.addEntry(username, json.dumps(res))
 

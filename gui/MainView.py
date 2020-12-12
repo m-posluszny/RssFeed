@@ -39,7 +39,7 @@ class MainView(QWidget):
         self.__right_split.addWidget(self.article_box)
         self.__right_split.setHandleWidth(4)
         self.__main_layout = QVBoxLayout()
-        self.__main_layout.addWidget(self.__right_split)
+        self.__main_layout.addWidget(self.__right_split)    
         self.setLayout(self.__main_layout)
     
     def get_user_groups(self):
