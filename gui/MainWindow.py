@@ -1,23 +1,15 @@
 from gui.MainView import MainView
-from PySide2 import QtWidgets
-from PySide2.QtCore import QItemSelectionModel
 from gui.FormView import LoginView, RegisterView
 from gui.ListerView import ListerView
 from libs.urlhandler import URLHandler
 from libs.grouphandler import GroupHandler
 from libs.credhandler import CredentialsHandler
 from libs.databasehandler import DatabaseHandler
-from PySide2.QtCore import QItemSelectionModel
 from PySide2.QtWidgets import (
     QMainWindow,
     QDesktopWidget,
     QAction,
     QInputDialog,
-    QTabWidget,
-    QTextEdit,
-    QSplitter,
-    QVBoxLayout,
-    QWidget
     
 )
 
@@ -145,22 +137,6 @@ class MainWindow(QMainWindow):
             
     def logoutCallback(self):
         self.showLogin()
-
-    def viewAllCallback(self):
-        print("This action is yet to be implemented")
-
-    def viewGroupCallback(self,title):
-
-        article_view = FeedView(title,self)
-        
-
-        for article in entry['urls'][0]['articles']:
-            article_view.append_message()
-
-        self._tab.addTab(article_view,title)
-
-    def viewPopularCallback(self):
-        print("This action is yet to be implemented")
 
     def exit_app(self):
         self.close()
