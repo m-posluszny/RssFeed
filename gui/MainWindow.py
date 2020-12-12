@@ -86,8 +86,12 @@ class MainWindow(QMainWindow):
             self.group_view.add_group(group,urls,indexes)
         ix = self.group_view.model().index(0, 0)
         self.group_view.selectionModel().setCurrentIndex(ix,QItemSelectionModel.SelectCurrent)
-        
-                
+        try:
+            item = self.group_view.selectedItems()[0]
+            self.set_group(item)
+        except:
+            ...
+            
     def set_group(self,item):
         if item.rss_type == "group":
             for index in item.url_indexes:

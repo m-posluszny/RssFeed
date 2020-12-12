@@ -26,6 +26,7 @@ class ArticleBox(QFrame):
         self.__label.setWordWrap(True)
         self.__label.setFont(__label_font)
         self.__content_box=QWebEngineView()
+        self.__content_box.setMinimumSize(300,300)
         self.__content_box.setContextMenuPolicy(Qt.NoContextMenu)
         self.__content_box.setSizePolicy(QSizePolicy.MinimumExpanding,QSizePolicy.MinimumExpanding)
         self.__link_btn = QPushButton()
