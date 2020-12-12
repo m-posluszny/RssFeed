@@ -10,6 +10,8 @@ class FeedView(QListView):
         self.__model = QStandardItemModel(self)
         self.setModel(self.__model)
 
+    def clear_list(self):
+        self.__model.clear()
 
     def append_message(self,site,title,desc,date,link,seen):
         print(date)

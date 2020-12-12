@@ -58,7 +58,7 @@ class MainView(QWidget):
             ...
             
     def set_group(self,item):
-        self.feed_view = FeedView()
+        self.feed_view.clear_list()
         if item.rss_type == "group":
             for index in item.url_indexes:
                 url = self.entry['urls'][index]
@@ -76,4 +76,5 @@ class MainView(QWidget):
     def set_article(self,current):
         row = row = [qmi.row() for qmi in self.feed_view.selectedIndexes()][0]
         item = self.feed_view.model().item(row)
+        print(item)
         self.article_box.set_data(**item.article_bundle)
