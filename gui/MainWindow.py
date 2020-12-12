@@ -61,7 +61,6 @@ class MainWindow(QMainWindow):
         self.group_view.itemDoubleClicked.connect(self.set_group)
         dbh = DatabaseHandler()
         self.entry = dbh.getEntry(CredentialsHandler.lastUsername) #
-        print(self.entry)
         self.get_user_groups()
         self.__left_split = QSplitter()
         self.__right_split = QSplitter()
@@ -162,6 +161,7 @@ class MainWindow(QMainWindow):
             urlh = URLHandler()
             if urlh.stringIsURL(res):
                 URLHandler.addURL(res)
+                URLHandler.addURLToGroup(res, 'All')
             else:
                 print('it\'s not a url')
 
