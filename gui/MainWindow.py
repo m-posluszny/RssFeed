@@ -6,6 +6,8 @@ from gui.GroupView import GroupView
 from gui.ArticleBox import ArticleBox
 from gui.ListerView import ListerView
 from libs.urlhandler import URLHandler
+from libs.grouphandler import GroupHandler
+from libs.credhandler import CredentialsHandler
 from libs.databasehandler import DatabaseHandler
 from PySide2.QtCore import QItemSelectionModel
 from PySide2.QtWidgets import (
@@ -58,7 +60,8 @@ class MainWindow(QMainWindow):
         self.feed_view.selectionModel().selectionChanged.connect(self.set_article)
         self.group_view.itemDoubleClicked.connect(self.set_group)
         dbh = DatabaseHandler()
-        self.entry = dbh.getEntry('admin2') #
+        self.entry = dbh.getEntry(CredentialsHandler.lastUsername) #
+        print(self.entry)
         self.get_user_groups()
         self.__left_split = QSplitter()
         self.__right_split = QSplitter()
@@ -81,7 +84,9 @@ class MainWindow(QMainWindow):
             for index in indexes:
                 urls.append(self.entry['urls'][index]["actual_url"])
             self.group_view.add_group(group,urls,indexes)
-       
+        ix = self.group_view.model().index(0, 0)
+        self.group_view.selectionModel().setCurrentIndex(ix,QItemSelectionModel.SelectCurrent)
+        
                 
     def set_group(self,item):
         if item.rss_type == "group":
@@ -126,10 +131,10 @@ class MainWindow(QMainWindow):
         bar.addAction(removeGroupAction)
         
         addUrlGroupAction = QAction("Add URL to Group", self)
-        addUrlGroupAction.triggered.connect(self.addGroupCallback)
+#        addUrlGroupAction.triggered.connect(self.addGroupCallback)
 
         removeUrlGroupAction = QAction("Remove URL from Group", self)
-        removeUrlGroupAction.triggered.connect(self.removeGroupCallback)
+#        removeUrlGroupAction.triggered.connect(self.removeGroupCallback)
 
         bar.addAction(addUrlGroupAction)
         bar.addAction(removeUrlGroupAction)
@@ -147,13 +152,12 @@ class MainWindow(QMainWindow):
    
     # TODO Move all menubar things to class MenuBar in gui
     def addURLCallback(self):
-        text, ok = QInputDialog.getText(self, "Add URL", "Paste URL: ")
+        res, ok = QInputDialog.getText(self, "Add URL", "Paste URL: ")
 
         if ok:
-            # Here we use URL manager to add this into the database
             urlh = URLHandler()
-            if urlh.stringIsURL(text):
-                print(text)
+            if urlh.stringIsURL(res):
+                URLHandler.addURL(res)
             else:
                 print('it\'s not a url')
 
@@ -161,28 +165,36 @@ class MainWindow(QMainWindow):
     def removeURLCallback(self):
         prompt = 'List of URLs'
         title = 'Choose URL to remove'
-        data = [str(x) for x in range(10)]
+
+        db = DatabaseHandler()
+        entries = db.getEntry(CredentialsHandler.lastUsername)
+        data = [url['actual_url'] for url in entries['urls']]
         ls = ListerView(prompt, title, data, self)
 
         if ls.exec_():
-            print(ls.getResults())
+            reslist = ls.getResults()
+            for res in reslist:
+                URLHandler.removeURL(res)
 
     def addGroupCallback(self):
-        text, ok = QInputDialog.getText(
-            self, "Group URL", "Enter group name: ")
+        res, ok = QInputDialog.getText(self, "Group URL", "Enter group name: ")
 
         if ok:
-            # Here we use GroupManager to add this into the database
-            print(text)
+            GroupHandler.addGroup(res)
 
     def removeGroupCallback(self):
         prompt = 'List of Groups'
         title = 'Choose group to remove'
-        data = [str(x) for x in range(100)]
+
+        db = DatabaseHandler()
+        entries = db.getEntry(CredentialsHandler.lastUsername)
+        data = [url for url in entries['groups']]
         ls = ListerView(prompt, title, data, self)
 
         if ls.exec_():
-            print(ls.getResults())
+            reslist = ls.getResults()
+            for res in reslist:
+                GroupHandler.removeGroup(res)
             
     def logoutCallback(self):
         self.showLogin()
