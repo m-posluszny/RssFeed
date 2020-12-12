@@ -1,6 +1,10 @@
+import json
 from hashlib import sha1
+from libs.databasehandler import DatabaseHandler
 
 class CredentialsHandler:
+    lastUsername = ''
+
     def __init__(self, username, password):
 
         bytes_passwd = password
@@ -13,33 +17,80 @@ class CredentialsHandler:
         self.__username = username
         self.__password = bytes_passwd
         self.__dbHandler = None
+
+        CredentialsHandler.lastUsername = username
+
+    @property
+    def password(self):
+        return self.__password
     
+    @property
+    def username(self):
+        return self.__username
+
     def doesUserExist(self):
-        result = None #obsługa tego będzie musiała być dokładniejsza, sprawdzac czy połączenie moze byc nawiązane
-        # result = self.__dbHandler.findEntry(username)
+        dbh = DatabaseHandler()
+
+        result = dbh.getEntry(self.username)
+
         if result == None:
             return False
         else:
             return True
     
     def createUser(self):
-        ... #TODO db send operation
-        
+        dbh = DatabaseHandler()
+
+        # NOTE(mateusz): as a testing measure each new user is subscribed to xkcd's rss
+        value = { 
+                'password': self.password,
+                'urls': [
+                    {
+                        'actual_url': 'https://xkcd.com/rss.xml',
+                        'rss_title': 'xkcd.com',
+                        'rss_link': 'https://xkcd.com/',
+                        'rss_desc': 'xkcd.com: A webcomic of romance and math humor.',
+                        'articles': [
+                            {
+                                "title": "Wonder Woman 1984",
+                                "link": "https://xkcd.com/2396/",
+                                "desc": r'<img src="https://imgs.xkcd.com/comics/wonder_woman_1984.png" title="\'Wait, why would you think a movie set in 1984 would do drive-ins as a retro promotion?\' \'You know, 80s stuff. Drive-in movies. Britney Spears doing the hustle. Elvis going on Ed Sullivan and showing off his pog collection.\' \'What year were you born, again?\'" alt="\'Wait, why would you think a movie set in 1984 would do drive-ins as a retro promotion?\' \'You know, 80s stuff. Drive-in movies. Britney Spears doing the hustle. Elvis going on Ed Sullivan and showing off his pog collection.\' \'What year were you born, again?\'" />',
+                                "pub_date": "Wed, 09 Dec 2020 05:00:00 -0000",
+                                "seen": False,
+                                },
+                            {
+                                'title': 'Covid Precaution Level',
+                                'link': 'https://xkcd.com/2395/',
+                                'desc': r'<img src="https://imgs.xkcd.com/comics/covid_precaution_level.png" title="It\'s frustrating to calibrate your precautions when there\'s only one kind of really definitive feedback you can get, you can only get it once, and when you do it\'s too late." alt="It\'s frustrating to calibrate your precautions when there\'s only one kind of really definitive feedback you can get, you can only get it once, and when you do it\'s too late." />',
+                                'pub_date': 'Mon, 07 Dec 2020 05:00:00 -0000',
+                                'seen': True,
+                                },
+                            ],
+                        },
+                    ],
+                'groups': {
+                    'All': [ 0 ],
+                    },
+                }
+
+        value_bytes = json.dumps(value).encode()
+
+        result = dbh.addEntry(self.username, value_bytes)
+
     def encryptCredentials(self):
         hasher = sha1(self.__password)
         self.__password = hasher.hexdigest()
-        print(self.__password)
 
     def areCredValid(self):
+        dbh = DatabaseHandler()
+
         # Password has to encrypted by this point
-        entry = None
+        result = dbh.getEntry(self.username)
 
-        #entry = self__dbHandler.findEntry(self.__username)
-
-        if entry == None:
+        if result == None:
             return False
         else:
-            if entry.getPassword() == self.__password:
+            if result['password'] == self.password:
                 return True
             else:
                 return False

@@ -1,10 +1,12 @@
 from .article import Article
+from libs.rss import RSSHeader
 
 class RSSHandler:
     def __init__(self):
         self.__URL = ''
         self.__websiteContent = ''
-        self.__responeCode = ''
+        self.__responseCode = 0
+        self.__rssHeader = RSSHeader()
         self.__articles = []
 
     def retriveDataFromURL(self, url):
@@ -32,11 +34,11 @@ class RSSHandler:
         # Data for articles is contained inside <item> tags
         for child in channel:
             if child.tag == 'title':
-                print(child.text)
+                rssTitle = child.text
             elif child.tag == 'link':
-                print(child.text)
+                rssLink = child.text
             elif child.tag == 'description':
-                print(child.text)
+                rssDesc = child.text
             elif child.tag == 'item':
                 # Item has to contain the same 3 tags as channel
                 # but may contain others
@@ -59,11 +61,16 @@ class RSSHandler:
             else:
                 print("Unhandled tag", child.tag)
         
+        self.__rssHeader = RSSHeader(rssTitle, rssLink, rssDesc)
 
     def returnArticles(self):
         return self.__articles
+
+    def returnRSSHeader(self):
+        return ()
 
     # This is for debugging purposes?
     # I have it in vpp, but did not include that in sequence diagram
     def fetchIsSuccess(self):
         success = self.__responseCode >= 200 and self.__responseCode <= 299
+        return success

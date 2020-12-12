@@ -9,7 +9,6 @@ class FeedView(QListView):
         self.__model = QStandardItemModel(self)
         self.setModel(self.__model)
 
-        self.append_message("site.com","site.com/article1.html",'TITLE',"ARTICLEART ICLEARTICLEARTICLEART ICLEARTICLEARTI CLEATICLEA ARTICLERTICLEAR TICLEARTICLEARTICLE")     
 
     def append_message(self,site,title,desc,date,link,seen):
         text = site+title+date

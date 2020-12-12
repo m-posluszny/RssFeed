@@ -1,10 +1,12 @@
 from PySide2 import QtWidgets
+from PySide2.QtCore import QItemSelectionModel
 from gui.FormView import LoginView, RegisterView
 from gui.FeedView import FeedView
 from gui.ArticleBox import ArticleBox
 from gui.ListerView import ListerView
 from libs.urlhandler import URLHandler
 from libs.databasehandler import DatabaseHandler
+from PySide2.QtCore import QItemSelectionModel
 from PySide2.QtWidgets import (
     QMainWindow,
     QDesktopWidget,
@@ -15,8 +17,8 @@ from PySide2.QtWidgets import (
     QSplitter,
     QVBoxLayout,
     QWidget
+    
 )
-
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -26,6 +28,7 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(850,500)
         self.center()
         self.__toolBar = self.menuBar()
+        self.loadMenubar()
         self.showLogin()
         self.show()
 
@@ -63,12 +66,10 @@ class MainWindow(QMainWindow):
                 seen = article["seen"]
                 link = article["link"]
                 self.feed_view.append_message(site,title,desc,date,link,seen)
-        article = entry['urls'][0]['articles'][0]
-        #setfocustofirst
-        self.article_box.set_data(entry['urls'][0]['rss_link'], article['link'], article['title'], article['desc'])
+        ix = self.feed_view.model().index(0, 0)
+        self.feed_view.selectionModel().setCurrentIndex(ix,QItemSelectionModel.SelectCurrent)
         self.__left_split = QSplitter()
         self.__right_split = QSplitter()
-
         self.__left_split.addWidget(self.group_view)
         self.__left_split.addWidget(self.feed_view)
         self.__left_split.setHandleWidth(4)
