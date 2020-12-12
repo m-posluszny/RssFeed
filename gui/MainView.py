@@ -49,8 +49,8 @@ class MainView(QWidget):
         try:
             item = self.group_view.selectedItems()[0]
             self.set_group(item)
-        except:
-            ...
+        except Exception as e:
+            print(e)
             
     def set_group(self,item):
         if item.rss_type == "group" and self.selected_group != item:
@@ -74,5 +74,5 @@ class MainView(QWidget):
             row = [qmi.row() for qmi in self.feed_view.selectedIndexes()][0]
             item = self.feed_view.model().item(row)
             self.article_box.set_data(**item.article_bundle)
-        except:
-            pass
+        except Exception as e:
+            print(e)
