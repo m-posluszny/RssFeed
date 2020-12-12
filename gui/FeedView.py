@@ -2,20 +2,26 @@ from PySide2.QtCore import Qt
 from PySide2.QtGui import QStandardItem, QStandardItemModel, QColor
 from PySide2.QtWidgets import QSizePolicy,QLabel, QListView, QVBoxLayout, QFrame, QTabWidget
 from gui.ArticleBox import ArticleBox
-import datetime as dt
+from datetime import datetime
+ 
 
 class FeedView(QListView):
     def __init__(self, parent=None):
         super(FeedView, self).__init__(parent)
         self.__model = QStandardItemModel(self)
         self.setModel(self.__model)
+        self.setWordWrap(True)
 
     def clear_list(self):
         self.__model.clear()
 
     def append_message(self,site,title,desc,date,link,seen):
-        print(date)
-        text = site+title+date
+        time_obj = datetime.strptime(date, "%a, %d %b %Y %H:%M:%S %z")
+        if time_obj.date() < datetime.today().date():
+            row_date = time_obj.strftime("%H:%M")
+        else:
+            row_date = time_obj.strftime("%d %b, %Y")
+        text = f"{title}   {site}\n{row_date}"
         new_item = QStandardItem(text)
         new_item.setCheckable(False)
         new_item.setEditable(False)

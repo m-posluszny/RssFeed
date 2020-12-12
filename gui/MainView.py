@@ -5,12 +5,6 @@ from PySide2.QtCore import QItemSelectionModel
 from libs.credhandler import CredentialsHandler
 from libs.databasehandler import DatabaseHandler
 from PySide2.QtWidgets import (
-    QMainWindow,
-    QDesktopWidget,
-    QAction,
-    QInputDialog,
-    QTabWidget,
-    QTextEdit,
     QSplitter,
     QVBoxLayout,
     QWidget
@@ -22,6 +16,7 @@ class MainView(QWidget):
     def __init__(self):
         super().__init__()
         dbh = DatabaseHandler()
+        self.selected_group = None
         self.group_view = GroupView()
         self.feed_view = FeedView()
         self.article_box = ArticleBox()
@@ -58,8 +53,9 @@ class MainView(QWidget):
             ...
             
     def set_group(self,item):
-        self.feed_view.clear_list()
-        if item.rss_type == "group":
+        if item.rss_type == "group" and self.selected_group != item:
+            self.feed_view.clear_list()
+            self.selected_group == item
             for index in item.url_indexes:
                 url = self.entry['urls'][index]
                 site = url["rss_title"]
@@ -74,7 +70,9 @@ class MainView(QWidget):
         self.feed_view.selectionModel().setCurrentIndex(ix,QItemSelectionModel.SelectCurrent)
 
     def set_article(self,current):
-        row = row = [qmi.row() for qmi in self.feed_view.selectedIndexes()][0]
-        item = self.feed_view.model().item(row)
-        print(item)
-        self.article_box.set_data(**item.article_bundle)
+        try:
+            row = [qmi.row() for qmi in self.feed_view.selectedIndexes()][0]
+            item = self.feed_view.model().item(row)
+            self.article_box.set_data(**item.article_bundle)
+        except:
+            pass
