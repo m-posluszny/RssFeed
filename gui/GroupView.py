@@ -42,5 +42,5 @@ class GroupView(QTreeWidget):
 
             art = rssh.returnArticles()
             URLHandler.appendDownloadedArticles(url, art)
-        else if self.right_clicked_item.rss_type == 'group':
+        elif self.right_clicked_item.rss_type == 'group':
             print('Group refresh is not yet implemented')
