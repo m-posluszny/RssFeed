@@ -60,7 +60,7 @@ class MainWindow(QMainWindow):
         self.feed_view.selectionModel().selectionChanged.connect(self.set_article)
         self.group_view.itemDoubleClicked.connect(self.set_group)
         dbh = DatabaseHandler()
-        self.entry = dbh.getEntry(CredentialsHandler.lastUsername) #
+        self.entry = dbh.getEntry(CredentialsHandler.lastUsername)
         self.get_user_groups()
         self.__left_split = QSplitter()
         self.__right_split = QSplitter()

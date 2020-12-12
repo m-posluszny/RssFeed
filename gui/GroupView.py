@@ -1,4 +1,6 @@
-from PySide2.QtWidgets import QTreeWidget, QTreeWidgetItem
+from PySide2.QtCore import Qt
+from PySide2.QtGui import QCursor
+from PySide2.QtWidgets import QTreeWidget, QTreeWidgetItem, QMenu, QAction
 
 class GroupView(QTreeWidget):
     
@@ -6,6 +8,8 @@ class GroupView(QTreeWidget):
         super().__init__(parent=parent)
         self.setColumnCount(1)
         self.setHeaderHidden(True)
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.showContextMenu)
 
     def add_group(self,group_name,urls,indexes):
         group_tree =  QTreeWidgetItem([group_name])
@@ -17,4 +21,15 @@ class GroupView(QTreeWidget):
         group_tree.url_indexes = indexes
         self.addTopLevelItem(group_tree)
     
-    
+    def showContextMenu(self, pos):
+        item = self.itemAt(pos)
+        assert(item.columnCount() >= 1)
+        self.right_clicked_item = item
+
+        menu = QMenu()
+        menu.addAction(QAction('Refresh', self, triggered=self.menuRefreshCallback))
+        menu.exec_(QCursor.pos())
+
+    def menuRefreshCallback(self):
+        print(self.right_clicked_item.text(0))
+        print(self.right_clicked_item.rss_type)
