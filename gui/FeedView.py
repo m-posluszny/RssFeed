@@ -2,6 +2,7 @@ from PySide2.QtCore import Qt
 from PySide2.QtGui import QStandardItem, QStandardItemModel, QColor
 from PySide2.QtWidgets import QSizePolicy,QLabel, QListView, QVBoxLayout, QFrame, QTabWidget
 from gui.ArticleBox import ArticleBox
+import datetime as dt
 
 class FeedView(QListView):
     def __init__(self, parent=None):
@@ -11,6 +12,7 @@ class FeedView(QListView):
 
 
     def append_message(self,site,title,desc,date,link,seen):
+        print(date)
         text = site+title+date
         new_item = QStandardItem(text)
         new_item.setCheckable(False)

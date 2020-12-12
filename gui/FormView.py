@@ -50,8 +50,8 @@ class FormView(QWidget):
         self._form_layout.addWidget(self._subtext_label)
         self._form_layout.addStretch()
     
-    def returnSuccesfulLogin(self,user_data):
-        self._parent.showFeedView(user_data)
+    def returnSuccesfulLogin(self):
+        self._parent.showFeedView()
     
     def onConfirmPress(self,event):
         ...
@@ -78,9 +78,7 @@ class LoginView(FormView):
             credHandler = CredentialsHandler(username,password)
             credHandler.encryptCredentials()
             if credHandler.areCredValid():
-                #getUserArticles
-                user_data = []
-                self.returnSuccesfulLogin(user_data)
+                self.returnSuccesfulLogin()
             else:
                 self.displayErrorMessage()
     
