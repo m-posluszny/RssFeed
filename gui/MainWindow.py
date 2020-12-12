@@ -5,6 +5,7 @@ from gui.FeedView import FeedView
 from gui.ArticleBox import ArticleBox
 from gui.ListerView import ListerView
 from libs.urlhandler import URLHandler
+from libs.grouphandler import GroupHandler
 from libs.credhandler import CredentialsHandler
 from libs.databasehandler import DatabaseHandler
 from PySide2.QtCore import QItemSelectionModel
@@ -110,10 +111,10 @@ class MainWindow(QMainWindow):
         bar.addAction(removeGroupAction)
         
         addUrlGroupAction = QAction("Add URL to Group", self)
-        addUrlGroupAction.triggered.connect(self.addGroupCallback)
+#        addUrlGroupAction.triggered.connect(self.addGroupCallback)
 
         removeUrlGroupAction = QAction("Remove URL from Group", self)
-        removeUrlGroupAction.triggered.connect(self.removeGroupCallback)
+#        removeUrlGroupAction.triggered.connect(self.removeGroupCallback)
 
         bar.addAction(addUrlGroupAction)
         bar.addAction(removeUrlGroupAction)
@@ -156,21 +157,24 @@ class MainWindow(QMainWindow):
                 URLHandler.removeURL(res)
 
     def addGroupCallback(self):
-        text, ok = QInputDialog.getText(
-            self, "Group URL", "Enter group name: ")
+        res, ok = QInputDialog.getText(self, "Group URL", "Enter group name: ")
 
         if ok:
-            # Here we use GroupManager to add this into the database
-            print(text)
+            GroupHandler.addGroup(res)
 
     def removeGroupCallback(self):
         prompt = 'List of Groups'
         title = 'Choose group to remove'
-        data = [str(x) for x in range(100)]
+
+        db = DatabaseHandler()
+        entries = db.getEntry(CredentialsHandler.lastUsername)
+        data = [url for url in entries['groups']]
         ls = ListerView(prompt, title, data, self)
 
         if ls.exec_():
-            print(ls.getResults())
+            reslist = ls.getResults()
+            for res in reslist:
+                GroupHandler.removeGroup(res)
             
     def logoutCallback(self):
         self.showLogin()
