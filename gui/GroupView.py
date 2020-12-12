@@ -1,6 +1,8 @@
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QCursor
 from PySide2.QtWidgets import QTreeWidget, QTreeWidgetItem, QMenu, QAction
+from libs.rsshandler import RSSHandler
+from libs.urlhandler import URLHandler
 
 class GroupView(QTreeWidget):
     
@@ -31,5 +33,14 @@ class GroupView(QTreeWidget):
         menu.exec_(QCursor.pos())
 
     def menuRefreshCallback(self):
-        print(self.right_clicked_item.text(0))
-        print(self.right_clicked_item.rss_type)
+        if self.right_clicked_item.rss_type == 'url':
+            url = self.right_clicked_item.text(0)
+
+            rssh = RSSHandler()
+            rssh.retriveDataFromURL(url)
+            rssh.parseXML()
+
+            art = rssh.returnArticles()
+            URLHandler.appendDownloadedArticles(url, art)
+        else if self.right_clicked_item.rss_type == 'group':
+            print('Group refresh is not yet implemented')
