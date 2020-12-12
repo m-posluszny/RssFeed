@@ -105,7 +105,7 @@ class RegisterView(FormView):
                 #getUserArticles
                 credHandler.createUser()
                 user_data = []
-                self.returnSuccesfulLogin(user_data)
+                self.returnSuccesfulLogin()
             else:
                 self.displayErrorMessage()
     
