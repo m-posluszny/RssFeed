@@ -5,17 +5,20 @@ from libs.urlhandler import URLHandler
 from libs.grouphandler import GroupHandler
 from libs.credhandler import CredentialsHandler
 from libs.databasehandler import DatabaseHandler
+from pyside_material import apply_stylesheet, list_themes
 from PySide2.QtWidgets import (
     QMainWindow,
     QDesktopWidget,
     QAction,
-    QInputDialog,
+    QInputDialog, QMenu,
     
 )
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self,app):
         super(MainWindow, self).__init__()
+        self.__app = app
+        apply_stylesheet(app, theme='dark_amber.xml')
         self.setWindowTitle("RSS Feed")
         self.setGeometry(300, 300, 850, 500)
         self.setMinimumSize(850,500)
@@ -76,14 +79,17 @@ class MainWindow(QMainWindow):
 
         bar.addAction(addUrlGroupAction)
         bar.addAction(removeUrlGroupAction)
-    
+        #themeMenu = QMenu("Theme",self)
         exitAction = QAction("Quit", self)
         exitAction.setShortcut("Ctrl-X")
         exitAction.triggered.connect(self.exit_app)
-
+        # for theme in list_themes():
+        #     themeAction = QAction(theme,self)
+        #     themeAction.triggered.connect(lambda: self.switch_theme(theme))
+        #     themeMenu.addAction(themeAction)
         logoutAction = QAction("Logout", self)
         logoutAction.triggered.connect(self.logoutCallback)
-        
+        #user.addMenu(themeMenu)
         user.addAction(exitAction)
         user.addAction(logoutAction)
 
@@ -97,10 +103,13 @@ class MainWindow(QMainWindow):
             if urlh.stringIsURL(res):
                 URLHandler.addURL(res)
                 URLHandler.addURLToGroup(res, 'All')
+                self.mainView.refresh_view()
             else:
                 print('it\'s not a url')
 
-
+    def switch_theme(self,theme):
+        apply_stylesheet(self.__app,theme)
+    
     def removeURLCallback(self):
         prompt = 'List of URLs'
         title = 'Choose URL to remove'
@@ -114,13 +123,15 @@ class MainWindow(QMainWindow):
             reslist = ls.getResults()
             for res in reslist:
                 URLHandler.removeURL(res)
+            self.mainView.refresh_view()
 
     def addGroupCallback(self):
         res, ok = QInputDialog.getText(self, "Group URL", "Enter group name: ")
-
         if ok:
             GroupHandler.addGroup(res)
-
+            self.mainView.refresh_view()
+             
+            
     def removeGroupCallback(self):
         prompt = 'List of Groups'
         title = 'Choose group to remove'
@@ -134,6 +145,7 @@ class MainWindow(QMainWindow):
             reslist = ls.getResults()
             for res in reslist:
                 GroupHandler.removeGroup(res)
+            self.mainView.refresh_view()
             
     def logoutCallback(self):
         self.showLogin()

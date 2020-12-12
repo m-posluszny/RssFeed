@@ -32,7 +32,7 @@ class FeedView(QListView):
         }
         self._og_bg = new_item.background();
         self.set_seen(new_item,seen)
-        self.__model.appendRow(new_item)
+        self.__model.insertRow(0,new_item)
     
     def set_seen(self,item,seen):
         if seen:

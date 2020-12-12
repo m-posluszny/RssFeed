@@ -27,7 +27,7 @@ class ArticleBox(QFrame):
         self.__label.setFont(__label_font)
         self.__content_box=QWebEngineView()
         self.__content_box.setMinimumSize(300,300)
-        self.__content_box.setContextMenuPolicy(Qt.NoContextMenu)
+       # self.__content_box.setContextMenuPolicy(Qt.NoContextMenu)
         self.__content_box.setSizePolicy(QSizePolicy.MinimumExpanding,QSizePolicy.MinimumExpanding)
         self.__link_btn = QPushButton()
         self.__link_btn.setFlat(True)
@@ -39,7 +39,8 @@ class ArticleBox(QFrame):
         
     def set_data(self,site,link,title,article):
         self.__content_box.setHtml(article)
-        self.__link_btn.setText(f"Read more on {link}")
+        self.__link_btn.setText(f"Read more")
+        ##add webbrowser handling
         self.__site.setText(site)
         self.__label.setText(title)
         

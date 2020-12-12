@@ -1,7 +1,6 @@
 from PySide2.QtCore import QTimer
 from PySide2.QtWidgets  import QApplication
 from gui.MainWindow import MainWindow
-from pyside_material import apply_stylesheet
 import sys
 import signal
 import atexit
@@ -23,8 +22,7 @@ def main():
     signal.signal(signal.SIGINT, sigint_handler)
     atexit.register(exit_handler)
     app = QApplication()
-    apply_stylesheet(app, theme='dark_amber.xml')
-    window = MainWindow()
+    window = MainWindow(app)
     timer = QTimer()
     timer.start(500)
     timer.timeout.connect(lambda: None)
