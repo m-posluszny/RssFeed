@@ -1,9 +1,7 @@
-from PySide2.QtCore import Qt 
 from PySide2.QtGui import QStandardItem, QStandardItemModel, QColor
-from PySide2.QtWidgets import QSizePolicy,QLabel, QListView, QVBoxLayout, QFrame, QTabWidget
-from gui.ArticleBox import ArticleBox
+from PySide2.QtWidgets import QListView
 from datetime import datetime
- 
+import dateutil.parser as DP
 
 class FeedView(QListView):
     def __init__(self, parent=None):
@@ -16,7 +14,7 @@ class FeedView(QListView):
         self.__model.clear()
 
     def append_message(self,site,title,desc,date,link,seen):
-        time_obj = datetime.strptime(date, "%a, %d %b %Y %H:%M:%S %z")
+        time_obj = DP.parse(date)
         if time_obj.date() < datetime.today().date():
             row_date = time_obj.strftime("%H:%M")
         else:
