@@ -1,7 +1,6 @@
 from gui.FeedView import FeedView
 from gui.GroupView import GroupView
 from gui.ArticleBox import ArticleBox
-from gui.ListerView import ListerView
 from PySide2.QtCore import QItemSelectionModel
 from libs.credhandler import CredentialsHandler
 from libs.databasehandler import DatabaseHandler
@@ -59,6 +58,7 @@ class MainView(QWidget):
             ...
             
     def set_group(self,item):
+        self.feed_view = FeedView()
         if item.rss_type == "group":
             for index in item.url_indexes:
                 url = self.entry['urls'][index]

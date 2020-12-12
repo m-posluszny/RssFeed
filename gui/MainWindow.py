@@ -2,6 +2,7 @@ from gui.MainView import MainView
 from PySide2 import QtWidgets
 from PySide2.QtCore import QItemSelectionModel
 from gui.FormView import LoginView, RegisterView
+from gui.ListerView import ListerView
 from libs.urlhandler import URLHandler
 from libs.grouphandler import GroupHandler
 from libs.credhandler import CredentialsHandler
