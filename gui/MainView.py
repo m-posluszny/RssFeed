@@ -4,6 +4,7 @@ from gui.ArticleBox import ArticleBox
 from PySide2.QtCore import QItemSelectionModel
 from libs.credhandler import CredentialsHandler
 from libs.databasehandler import DatabaseHandler
+import dateutil.parser as DP
 from PySide2.QtWidgets import (
     QSplitter,
     QVBoxLayout,
@@ -21,7 +22,7 @@ class MainView(QWidget):
         self.article_box = ArticleBox(self)
         self.feed_view.selectionModel().selectionChanged.connect(self.set_article)
         self.group_view.itemDoubleClicked.connect(self.set_group)
-        self.refresh_view()
+        self.refresh_groups()
         self.__left_split = QSplitter(parent=self)
         self.__right_split = QSplitter(parent=self)
         self.__left_split.addWidget(self.group_view)
@@ -60,16 +61,23 @@ class MainView(QWidget):
         if item.rss_type == "group" and (self.selected_group != item.text(0) or update):
             self.feed_view.clear_list()
             self.selected_group = item.text(0)
+            art_list=[]
             for index in item.url_indexes:
                 url = self.entry['urls'][index]
                 site = url["rss_title"]
                 for article in url["articles"]:
-                    date = article["pub_date"]
-                    title = article["title"]
-                    desc = article["desc"]
-                    seen = article["seen"]
-                    link = article["link"]
-                    self.feed_view.append_message(site,title,desc,date,link,seen)
+                    article_bundle={
+                        "date" : DP.parse(article["pub_date"]),
+                        "title" : article["title"],
+                        "desc" : article["desc"],
+                        "seen" : article["seen"],
+                        "link" : article["link"],
+                        "site" : site,
+                    }
+                    art_list.append(article_bundle)
+            art_list = sorted(art_list, key = lambda x: (not x["seen"], x["date"].date()))
+            for article in art_list:
+                self.feed_view.append_message(**article)
         ix = self.feed_view.model().index(0, 0)
         self.feed_view.selectionModel().setCurrentIndex(ix,QItemSelectionModel.SelectCurrent)
 
@@ -78,10 +86,18 @@ class MainView(QWidget):
             row = [qmi.row() for qmi in self.feed_view.selectedIndexes()][0]
             item = self.feed_view.model().item(row)
             self.article_box.set_data(**item.article_bundle)
+            self.feed_view.set_seen(item,True)
+            #write seen to database
         except Exception as e:
             print(e)
     
-    def refresh_view(self):
+    def refresh_groups(self):
         dbh = DatabaseHandler()
         self.entry = dbh.getEntry(CredentialsHandler.lastUsername) #
         self.get_user_groups(update=True)
+    
+    def refresh_feed(self):
+        dbh = DatabaseHandler()
+        item = self.group_view.selectedItems()[0].parent()
+        self.entry = dbh.getEntry(CredentialsHandler.lastUsername) 
+        self.set_group(item,True)

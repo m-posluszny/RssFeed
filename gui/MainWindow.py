@@ -103,7 +103,7 @@ class MainWindow(QMainWindow):
             if urlh.stringIsURL(res):
                 URLHandler.addURL(res)
                 URLHandler.addURLToGroup(res, 'All')
-                self.mainView.refresh_view()
+                self.mainView.refresh_groups()
             else:
                 print('it\'s not a url')
 
@@ -123,13 +123,13 @@ class MainWindow(QMainWindow):
             reslist = ls.getResults()
             for res in reslist:
                 URLHandler.removeURL(res)
-            self.mainView.refresh_view()
+            self.mainView.refresh_groups()
 
     def addGroupCallback(self):
         res, ok = QInputDialog.getText(self, "Group URL", "Enter group name: ")
         if ok:
             GroupHandler.addGroup(res)
-            self.mainView.refresh_view()
+            self.mainView.refresh_groups()
              
             
     def removeGroupCallback(self):
@@ -145,7 +145,7 @@ class MainWindow(QMainWindow):
             reslist = ls.getResults()
             for res in reslist:
                 GroupHandler.removeGroup(res)
-            self.mainView.refresh_view()
+            self.mainView.refresh_groups()
             
     def logoutCallback(self):
         self.showLogin()
