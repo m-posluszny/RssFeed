@@ -1,9 +1,9 @@
-import PySide2
 from PySide2 import QtWidgets
 from PySide2.QtGui import QFont, QImage, QPixmap
 from PySide2.QtWidgets import (QLabel, QPushButton, QVBoxLayout,QFrame,QSizePolicy)
 from PySide2.QtCore import QSize, Qt
 from PySide2.QtWebEngineWidgets import QWebEngineView
+import webbrowser
 
 class ArticleBox(QFrame):
     
@@ -31,6 +31,7 @@ class ArticleBox(QFrame):
         self.__content_box.setSizePolicy(QSizePolicy.MinimumExpanding,QSizePolicy.MinimumExpanding)
         self.__link_btn = QPushButton()
         self.__link_btn.setFlat(True)
+        self.__link_btn.clicked.connect(self.open_link)
         self.__layout.addWidget(self.__label)
         self.__layout.addWidget(self.__site)
         self.__layout.addWidget(self.__content_box)
@@ -41,7 +42,9 @@ class ArticleBox(QFrame):
         self.__content_box.setHtml(article)
         self.__link_btn.setText(f"Read more")
         ##add webbrowser handling
+        self.__link = link
         self.__site.setText(site)
         self.__label.setText(title)
         
-    
+    def open_link(self):
+        webbrowser.open_new_tab(self.__link)

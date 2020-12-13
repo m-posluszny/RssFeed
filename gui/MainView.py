@@ -49,7 +49,6 @@ class MainView(QWidget):
             self.group_view.add_group(group,urls,indexes)
         ix = self.group_view.model().index(0, 0)
         if not active_exists:
-            self.article_box = ArticleBox(self)
             self.group_view.selectionModel().setCurrentIndex(ix,QItemSelectionModel.SelectCurrent)
         try:
             item = self.group_view.selectedItems()[0]
@@ -87,7 +86,7 @@ class MainView(QWidget):
             item = self.feed_view.model().item(row)
             self.article_box.set_data(**item.article_bundle)
             self.feed_view.set_seen(item,True)
-            #write seen to database
+            #write seen to databasex
         except Exception as e:
             print(e)
     
