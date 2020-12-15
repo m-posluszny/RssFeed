@@ -1,7 +1,6 @@
-from PySide2 import QtWidgets
-from PySide2.QtGui import QFont, QImage, QPixmap
+from PySide2.QtGui import QFont
 from PySide2.QtWidgets import (QLabel, QPushButton, QVBoxLayout,QFrame,QSizePolicy)
-from PySide2.QtCore import QSize, Qt
+from PySide2.QtCore import Qt
 from PySide2.QtWebEngineWidgets import QWebEngineView
 import webbrowser
 
