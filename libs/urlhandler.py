@@ -104,6 +104,20 @@ class URLHandler:
 
         dbh.addEntry(username, json.dumps(res))
 
+    def setArticleSeen(url, seen):
+        dbh = DatabaseHandler()
+
+        username = CredentialsHandler.lastUsername
+        res = dbh.getEntry(username)
+
+        for i, entry in enumerate(res['urls']):
+            for j, article in enumerate(entry['articles']):
+                if article['link'] == url:
+                    res['urls'][i]['articles'][j]['seen'] = seen
+                    break
+
+        dbh.addEntry(username, json.dumps(res))
+
     def getMostPopularURLs():
         pass
 

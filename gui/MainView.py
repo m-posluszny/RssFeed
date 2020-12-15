@@ -2,6 +2,7 @@ from gui.FeedView import FeedView
 from gui.GroupView import GroupView
 from gui.ArticleBox import ArticleBox
 from PySide2.QtCore import QItemSelectionModel
+from libs.urlhandler import URLHandler
 from libs.credhandler import CredentialsHandler
 from libs.databasehandler import DatabaseHandler
 import dateutil.parser as DP
@@ -86,7 +87,8 @@ class MainView(QWidget):
             item = self.feed_view.model().item(row)
             self.article_box.set_data(**item.article_bundle)
             self.feed_view.set_seen(item,True)
-            #write seen to databasex
+
+            URLHandler.setArticleSeen(item.article_bundle['link'], True)
         except Exception as e:
             print(e)
     
