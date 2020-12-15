@@ -45,8 +45,10 @@ class MainWindow(QMainWindow):
         if debugNoLogin:
             credHandler = CredentialsHandler('admin','a')
             credHandler.encryptCredentials()
-            assert(credHandler.areCredValid())
-            self.showFeedView()
+            if credHandler.areCredValid():
+                self.showFeedView()
+            else:
+                self.showRegister()
         else:
             self.showLogin()
 
