@@ -33,7 +33,7 @@ class FeedView(QListView):
         self.__model.insertRow(0,new_item)
     
     def set_seen(self,item,seen):
-        if seen:
+        if not seen:
             item.setBackground(QColor(112, 112, 112))
         else:
             item.setBackground(self._og_bg)
