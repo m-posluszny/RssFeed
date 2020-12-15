@@ -14,9 +14,13 @@ class RSSHandler:
 
         self.__URL = url
 
-        response = requests.get(url)
-        self.__websiteContent = response.text
-        self.__responseCode = response.status_code
+        try:
+            response = requests.get(url)
+            self.__websiteContent = response.text
+            self.__responseCode = response.status_code
+        except:
+            self.__responseCode = 400
+            print('cannot fetch', url)
 
     def formData(self):
         pass
