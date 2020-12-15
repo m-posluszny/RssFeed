@@ -29,6 +29,8 @@ class ArticleBox(QFrame):
         self.__content_box.setMinimumSize(300,300)
        # self.__content_box.setContextMenuPolicy(Qt.NoContextMenu)
         self.__content_box.setSizePolicy(QSizePolicy.MinimumExpanding,QSizePolicy.MinimumExpanding)
+        self.__content_box.loadStarted.connect(self.loadStartedCallback)
+        self.__content_box.loadFinished.connect(self.loadFinishedCallback)
         self.__link_btn = QPushButton()
         self.__link_btn.setFlat(True)
         self.__link_btn.clicked.connect(self.open_link)
@@ -37,9 +39,15 @@ class ArticleBox(QFrame):
         self.__layout.addWidget(self.__content_box)
         self.__layout.addWidget(self.__link_btn, alignment=Qt.AlignCenter)
         self.setLayout(self.__layout)
+
+    def loadStartedCallback(self):
+        print('Web view load started...')
+
+    def loadFinishedCallback(self):
+        print('Web view load finished.')
         
     def set_data(self,site,link,title,article):
-        self.__content_box.setHtml(article)
+        self.__content_box.setHtml(article, link)
         self.__link_btn.setText(f"Read more")
         ##add webbrowser handling
         self.__link = link
