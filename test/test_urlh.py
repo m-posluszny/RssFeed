@@ -77,7 +77,7 @@ class TestURLHandler(unittest.TestCase):
         self.assertEqual(len(urlentry['articles']), 0)
 
         rssh = RSSHandler()
-        rssh.retriveDataFromURL(url)
+        rssh.fetchFromURL(url)
         self.assertEqual(rssh.fetchIsSuccess(), True)
 
         rssh.parseXML()

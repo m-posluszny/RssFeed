@@ -9,61 +9,44 @@ class RSSHandler:
         self.__rssHeader = RSSHeader()
         self.__articles = []
 
-    def retriveDataFromURL(self, url):
+    def fetchFromURL(self, url):
         import requests
 
         self.__URL = url
 
-        response = requests.get(url)
-        self.__websiteContent = response.text
-        self.__responseCode = response.status_code
+        try:
+            response = requests.get(url)
+            self.__websiteContent = response.text
+            self.__responseCode = response.status_code
+        except:
+            self.__responseCode = 400
+            print('cannot fetch', url)
 
     def formData(self):
         pass
 
     def parseXML(self):
-        import xml.etree.ElementTree as ET
-        
-        # Root node is <rss> tag
-        rss = ET.fromstring(self.__websiteContent)
+        import feedparser
 
-        # Child of the root node is <channel> which contains the actual data
-        channel = rss[0]
+        parsed = feedparser.parse(self.__websiteContent)
 
-        # Channel has to contain <title>, <link>, <description> tags but other are optional 
-        # Data for articles is contained inside <item> tags
-        # This is bad, I need to redo this one
-        rssTitle, rssLink, rssDesc = '', '', ''
-        for child in channel:
-            if child.tag == 'title':
-                rssTitle = child.text
-            elif child.tag == 'link':
-                rssLink = child.text
-            elif child.tag == 'description':
-                rssDesc = child.text
-            elif child.tag == 'item':
-                # Item has to contain the same 3 tags as channel
-                # but may contain others
-                title = ''
-                link = ''
-                desc = ''
-                date = None
-                for ichild in child:
-                    if ichild.tag == 'title':
-                        title = ichild.text
-                    elif ichild.tag == 'link':
-                        link = ichild.text
-                    elif ichild.tag == 'description':
-                        desc = ichild.text
-                    elif ichild.tag == 'pubDate':
-                        date = ichild.text
 
-                self.__articles.append(Article(title, link, desc, date))
+        rssFeed = parsed['feed']
+        assert('title' in rssFeed)
+        assert('link' in rssFeed)
+        assert('subtitle' in rssFeed)
 
-            else:
-                print("Unhandled tag", child.tag)
-        
+        rssTitle, rssLink, rssDesc = rssFeed['title'], rssFeed['link'], rssFeed['subtitle']
         self.__rssHeader = RSSHeader(rssTitle, rssLink, rssDesc)
+
+        rssItems = parsed['entries']
+        for item in rssItems:
+            assert('title' in item)
+            assert('link' in item)
+            assert('summary' in item)
+            assert('published' in item)
+
+            self.__articles.append(Article(item['title'], item['link'], item['summary'], item['published']))
 
     def returnArticles(self):
         return self.__articles

@@ -6,7 +6,7 @@ class TestURLHandler(unittest.TestCase):
     def test_correct_usage(self):
         rssh = RSSHandler()
 
-        rssh.retriveDataFromURL('https://xkcd.com/rss.xml')
+        rssh.fetchFromURL('https://xkcd.com/rss.xml')
         self.assertEqual(rssh.fetchIsSuccess(), True)
 
         rssh.parseXML()
@@ -20,7 +20,7 @@ class TestURLHandler(unittest.TestCase):
     def test_correct_article_print(self):
         rssh = RSSHandler()
 
-        rssh.retriveDataFromURL('https://xkcd.com/rss.xml')
+        rssh.fetchFromURL('https://xkcd.com/rss.xml')
         self.assertEqual(rssh.fetchIsSuccess(), True)
 
         rssh.parseXML()

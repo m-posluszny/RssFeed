@@ -37,8 +37,9 @@ class GroupView(QTreeWidget):
             url = self.right_clicked_item.text(0)
 
             rssh = RSSHandler()
-            rssh.retriveDataFromURL(url)
-            rssh.parseXML()
+            rssh.fetchFromURL(url)
+            if rssh.fetchIsSuccess():
+                rssh.parseXML()
 
             art = rssh.returnArticles()
             URLHandler.appendDownloadedArticles(url, art)
