@@ -9,7 +9,7 @@ class RSSHandler:
         self.__rssHeader = RSSHeader()
         self.__articles = []
 
-    def retriveDataFromURL(self, url):
+    def fetchFromURL(self, url):
         import requests
 
         self.__URL = url
