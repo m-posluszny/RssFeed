@@ -34,7 +34,8 @@ class URLHandler:
         for i, entry in enumerate(res['urls']):
             if entry['actual_url'] == url:
                 if group in res['groups']:
-                    res['groups'][group].append(i)
+                    if i not in res['groups'][group]:
+                        res['groups'][group].append(i)
                 else:
                     res['groups'][group] = [i] 
 
