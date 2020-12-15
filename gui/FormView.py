@@ -1,7 +1,7 @@
 from libs.credhandler import CredentialsHandler
 from PySide2.QtCore import Qt
-from PySide2.QtGui import QFont, QPalette, QColor, QKeySequence, QShortcutEvent
-from PySide2.QtWidgets  import QLabel, QShortcut, QWidget, QLineEdit, QVBoxLayout, QPushButton
+from PySide2.QtGui import QFont, QPalette, QColor
+from PySide2.QtWidgets  import QLabel, QWidget, QLineEdit, QVBoxLayout, QPushButton
 
 class FormView(QWidget):
     
