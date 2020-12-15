@@ -6,12 +6,27 @@ from libs.grouphandler import GroupHandler
 from libs.credhandler import CredentialsHandler
 from libs.databasehandler import DatabaseHandler
 from pyside_material import apply_stylesheet, list_themes
+from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (
     QMainWindow,
     QDesktopWidget,
     QAction,
-    QInputDialog, QMenu,
-    
+    QMenu,
+    QInputDialog,
+    QMainWindow,
+    QAction,
+    QDialog,
+    QInputDialog,
+    QFormLayout,
+    QLabel,
+    QListView,
+    QApplication,
+    QDialogButtonBox,
+    QPushButton,
+    QSplitter,
+    QHBoxLayout,
+    QVBoxLayout,
+    QWidget,
 )
 
 class MainWindow(QMainWindow):
@@ -25,7 +40,18 @@ class MainWindow(QMainWindow):
         self.center()
         self.__toolBar = self.menuBar()
         self.loadMenubar()
-        self.showLogin()
+
+        debugNoLogin = True
+        if debugNoLogin:
+            credHandler = CredentialsHandler('admin','a')
+            credHandler.encryptCredentials()
+            if credHandler.areCredValid():
+                self.showFeedView()
+            else:
+                self.showRegister()
+        else:
+            self.showLogin()
+
         self.show()
 
     def center(self):
@@ -72,10 +98,10 @@ class MainWindow(QMainWindow):
         bar.addAction(removeGroupAction)
         
         addUrlGroupAction = QAction("Add URL to Group", self)
-#        addUrlGroupAction.triggered.connect(self.addGroupCallback)
+        addUrlGroupAction.triggered.connect(self.addURLToGroupCallback)
 
         removeUrlGroupAction = QAction("Remove URL from Group", self)
-#        removeUrlGroupAction.triggered.connect(self.removeGroupCallback)
+        removeUrlGroupAction.triggered.connect(self.removeURLFromGroupCallback)
 
         bar.addAction(addUrlGroupAction)
         bar.addAction(removeUrlGroupAction)
@@ -118,6 +144,7 @@ class MainWindow(QMainWindow):
         entries = db.getEntry(CredentialsHandler.lastUsername)
         data = [url['actual_url'] for url in entries['urls']]
         ls = ListerView(prompt, title, data, self)
+        ls.enableButtonBox()
 
         if ls.exec_():
             reslist = ls.getResults()
@@ -140,11 +167,88 @@ class MainWindow(QMainWindow):
         entries = db.getEntry(CredentialsHandler.lastUsername)
         data = [url for url in entries['groups']]
         ls = ListerView(prompt, title, data, self)
+        ls.enableButtonBox()
 
         if ls.exec_():
             reslist = ls.getResults()
             for res in reslist:
                 GroupHandler.removeGroup(res)
+            self.mainView.refresh_groups()
+
+    def addURLToGroupCallback(self):
+        w = QWidget()
+        f = QHBoxLayout(w)
+
+        db = DatabaseHandler()
+        entries = db.getEntry(CredentialsHandler.lastUsername)
+
+        ldata = [url for url in entries['groups']]
+        ls = ListerView('Groups', 'Groups', ldata, self)
+
+        rdata = [url['actual_url'] for url in entries['urls']]
+        rs = ListerView('Urls', 'Urls', rdata, self)
+
+        rs.layout().setContentsMargins(0,0,0,0)
+        ls.layout().setContentsMargins(0,0,0,0)
+        f.addWidget(ls)
+        f.addWidget(rs)
+
+        q = QDialog(self)
+        q.setWindowTitle('Add URL to Group')
+        mf = QVBoxLayout(q)
+        mf.addWidget(w)
+
+        buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, Qt.Horizontal, self)
+        mf.addWidget(buttonBox)
+        buttonBox.accepted.connect(q.accept)
+        buttonBox.rejected.connect(q.reject)
+
+        if q.exec_():
+            groups = ls.getResults()
+            urls = rs.getResults()
+
+            for group in groups:
+                for url in urls:
+                    URLHandler.addURLToGroup(url, group)
+
+            self.mainView.refresh_groups()
+
+    def removeURLFromGroupCallback(self):
+        w = QWidget()
+        f = QHBoxLayout(w)
+
+        db = DatabaseHandler()
+        entries = db.getEntry(CredentialsHandler.lastUsername)
+
+        ldata = [url for url in entries['groups']]
+        ls = ListerView('Groups', 'Groups', ldata, self)
+
+        rdata = [url['actual_url'] for url in entries['urls']]
+        rs = ListerView('Urls', 'Urls', rdata, self)
+
+        rs.layout().setContentsMargins(0,0,0,0)
+        ls.layout().setContentsMargins(0,0,0,0)
+        f.addWidget(ls)
+        f.addWidget(rs)
+
+        q = QDialog(self)
+        q.setWindowTitle('Remove URL from Group')
+        mf = QVBoxLayout(q)
+        mf.addWidget(w)
+
+        buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, Qt.Horizontal, self)
+        mf.addWidget(buttonBox)
+        buttonBox.accepted.connect(q.accept)
+        buttonBox.rejected.connect(q.reject)
+
+        if q.exec_():
+            groups = ls.getResults()
+            urls = rs.getResults()
+
+            for group in groups:
+                for url in urls:
+                    URLHandler.removeURLFromGroup(url, group)
+
             self.mainView.refresh_groups()
             
     def logoutCallback(self):
