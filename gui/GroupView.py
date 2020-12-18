@@ -3,6 +3,8 @@ from PySide2.QtGui import QCursor
 from PySide2.QtWidgets import QTreeWidget, QTreeWidgetItem, QMenu, QAction
 from libs.rsshandler import RSSHandler
 from libs.urlhandler import URLHandler
+from libs.databasehandler import DatabaseHandler
+from libs.credhandler import CredentialsHandler
 
 class GroupView(QTreeWidget):
     
@@ -47,4 +49,21 @@ class GroupView(QTreeWidget):
             self.parent().parent().parent().refresh_feed()
             
         elif self.right_clicked_item.rss_type == 'group':
-            print('Group refresh is not yet implemented')
+            groupName = self.right_clicked_item.text(0)
+            dbh = DatabaseHandler()
+            res = dbh.getEntry(CredentialsHandler.lastUsername)
+
+            for idx in res['groups'][groupName]:
+                url = res['urls'][idx]['actual_url']
+
+                rssh = RSSHandler()
+                rssh.fetchFromURL(url)
+                if rssh.fetchIsSuccess():
+                    rssh.parseXML()
+
+                art = rssh.returnArticles()
+                URLHandler.appendDownloadedArticles(url, art)
+
+            # TODO(mateusz): Michał fix this refresh because it doesn't target any one QTreeWidgetItem
+            # but the root so it falls on it's face 
+            #self.parent().parent().parent().refresh_feed()

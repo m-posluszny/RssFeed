@@ -76,6 +76,7 @@ class MainView(QWidget):
         art_list=[]
         for article in url["articles"]:
             article_bundle={
+                # TODO(mateusz): remove DP.parse() for speed-up
                 "date" : DP.parse(article["pub_date"]),
                 "title" : article["title"],
                 "desc" : article["desc"],
