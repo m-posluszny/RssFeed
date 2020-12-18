@@ -72,7 +72,7 @@ class MainView(QWidget):
             elif item.rss_type == "url":
                 url = self.entry['urls'][item.url_index]
                 art_list.extend(self.get_gui_articles(url))
-            art_list = sorted(art_list, key = lambda x: (not x["seen"], x["date"].date()))
+            art_list = sorted(art_list, key = lambda x: (not x["seen"], x["date"]))
             for article in art_list:
                 self.feed_view.append_message(**article)
     
@@ -81,8 +81,7 @@ class MainView(QWidget):
         art_list=[]
         for article in url["articles"]:
             article_bundle={
-                # TODO(mateusz): remove DP.parse() for speed-up
-                "date" : DP.parse(article["pub_date"]),
+                "date" : article["pub_date_parsed"],
                 "title" : article["title"],
                 "desc" : article["desc"],
                 "seen" : article["seen"],

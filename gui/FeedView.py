@@ -1,7 +1,7 @@
 from PySide2.QtGui import QStandardItem, QStandardItemModel, QColor
 from PySide2.QtWidgets import QListView
 from PySide2.QtCore import QItemSelectionModel
-from datetime import datetime
+import time
 
 class FeedView(QListView):
     def __init__(self, parent=None):
@@ -16,10 +16,12 @@ class FeedView(QListView):
         self.selectionModel().blockSignals(oldState)
 
     def append_message(self,site,title,desc,date,link,seen):
-        if date.date() >= datetime.today().date():
-            row_date = date.strftime("%H:%M")
+        today = time.gmtime()
+        
+        if (date.tm_year == today.tm_year) and (date.tm_yday == today.tm_yday):
+            row_date = "{:02d}:{:02d}".format(date.tm_hour, date.tm_min)
         else:
-            row_date = date.strftime("%d %b, %Y")
+            row_date = "{} {}, {}".format(date.tm_mday, date.tm_mon, date.tm_year)
         text = f"{title}   {site}\n{row_date}"
         new_item = QStandardItem(text)
         new_item.setCheckable(False)

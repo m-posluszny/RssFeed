@@ -96,6 +96,7 @@ class URLHandler:
                                 "link": nart.link,
                                 "desc": nart.content,
                                 "pub_date": nart.pubDate,
+                                "pub_date_parsed": nart.pubDateParsed,
                                 "seen": False,
                                 }
 
