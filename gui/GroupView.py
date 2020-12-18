@@ -18,9 +18,10 @@ class GroupView(QTreeWidget):
     def add_group(self,group_name,urls,indexes):
         group_tree =  QTreeWidgetItem([group_name])
         group_tree.rss_type = "group"
-        for url in urls:
+        for url,idx in zip(urls,indexes):
             url_row = QTreeWidgetItem([url])
             url_row.rss_type = "url"
+            url_row.url_index = idx
             group_tree.addChild(url_row)
         group_tree.url_indexes = indexes
         self.addTopLevelItem(group_tree)
