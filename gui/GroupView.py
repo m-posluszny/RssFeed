@@ -64,6 +64,4 @@ class GroupView(QTreeWidget):
                 art = rssh.returnArticles()
                 URLHandler.appendDownloadedArticles(url, art)
 
-            # TODO(mateusz): Michał fix this refresh because it doesn't target any one QTreeWidgetItem
-            # but the root so it falls on it's face 
-            #self.parent().parent().parent().refresh_feed()
+            self.parent().parent().refresh_feed()

@@ -29,7 +29,6 @@ class MainView(QWidget):
         self.__split.addWidget(self.feed_view)
         self.__split.addWidget(self.article_box)
         self.__split.setHandleWidth(4)
-        # self.__right_split.addWidget(self.__split)
         self.__main_layout = QVBoxLayout()
         self.__main_layout.addWidget(self.__split)    
         self.setLayout(self.__main_layout)
@@ -105,6 +104,8 @@ class MainView(QWidget):
     
     def refresh_feed(self):
         dbh = DatabaseHandler()
-        item = self.group_view.selectedItems()[0].parent()
+        # TODO(mateusz): Ask Michał if this has to be this way, in that I mean does it have to be .parent() for the selected item
+#        item = self.group_view.selectedItems()[0].parent()
+        item = self.group_view.selectedItems()[0]
         self.entry = dbh.getEntry(CredentialsHandler.lastUsername) 
         self.set_group(item,True)

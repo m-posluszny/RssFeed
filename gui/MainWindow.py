@@ -30,6 +30,7 @@ from PySide2.QtWidgets import (
 )
 
 class MainWindow(QMainWindow):
+
     def __init__(self,app):
         super(MainWindow, self).__init__()
         self.__app = app
