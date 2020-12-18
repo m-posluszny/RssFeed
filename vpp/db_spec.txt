@@ -20,6 +20,7 @@ JSON
                     "link": "https://xkcd.com/2396/",
                     "desc": "..........",
                     "pub_date": "Wed, 09 Dec 2020 05:00:00 -0000",
+                    "pub_date_parsed": time.struct_time(tm_year=2020, tm_mon=12, tm_mday=09, tm_hour=5, tm_min=0, tm_sec=0, tm_wday=0, tm_yday=349, tm_isdst=0),
                     "seen": False,
                 },
                 {
@@ -27,6 +28,7 @@ JSON
                     "link": "https://xkcd.com/2395/",
                     "desc": "..........",
                     "pub_date": "Mon, 07 Dec 2020 05:00:00 -0000",
+                    "pub_date_parsed": time.struct_time(tm_year=2020, tm_mon=12, tm_mday=07, tm_hour=5, tm_min=0, tm_sec=0, tm_wday=0, tm_yday=349, tm_isdst=0),
                     "seen": True,
                 },
             ],
