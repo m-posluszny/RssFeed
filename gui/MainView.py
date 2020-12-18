@@ -22,7 +22,7 @@ class MainView(QWidget):
         self.feed_view = FeedView(self)
         self.article_box = ArticleBox(self)
         self.feed_view.selectionModel().selectionChanged.connect(self.set_article)
-        self.group_view.itemDoubleClicked.connect(self.set_group)
+        self.group_view.itemClicked.connect(self.set_group)
         self.refresh_groups()
         self.__split = QSplitter(parent=self)
         self.__split.addWidget(self.group_view)

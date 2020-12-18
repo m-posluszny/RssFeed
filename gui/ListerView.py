@@ -9,7 +9,7 @@ class ListerView(QDialog):
         form = QFormLayout(self)
         form.addRow(QLabel(message))
         self.listView = QListView(self)
-        self.listView.doubleClicked.connect(self.mouseDoubleClickEvent)
+        self.listView.clicked.connect(self.mouseClickEvent)
         form.addRow(self.listView)
         model = QStandardItemModel(self.listView)
         self.setWindowTitle(title)
@@ -21,7 +21,7 @@ class ListerView(QDialog):
             model.appendRow(standardItem)
         self.listView.setModel(model)
 
-    def mouseDoubleClickEvent(self):
+    def mouseClickEvent(self):
         row = [qmi.row() for qmi in self.listView.selectedIndexes()][0]
         item = self.listView.model().item(row)
         checkState = item.checkState()
