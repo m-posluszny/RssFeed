@@ -67,6 +67,7 @@ class MainView(QWidget):
                 site = url["rss_title"]
                 for article in url["articles"]:
                     article_bundle={
+                        # TODO(mateusz): remove DP.parse() for speed-up
                         "date" : DP.parse(article["pub_date"]),
                         "title" : article["title"],
                         "desc" : article["desc"],
@@ -79,7 +80,6 @@ class MainView(QWidget):
             for article in art_list:
                 self.feed_view.append_message(**article)
         ix = self.feed_view.model().index(0, 0)
-        self.feed_view.selectionModel().setCurrentIndex(ix,QItemSelectionModel.SelectCurrent)
 
     def set_article(self,current):
         try:
