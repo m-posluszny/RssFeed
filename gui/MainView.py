@@ -24,16 +24,14 @@ class MainView(QWidget):
         self.feed_view.selectionModel().selectionChanged.connect(self.set_article)
         self.group_view.itemDoubleClicked.connect(self.set_group)
         self.refresh_groups()
-        self.__left_split = QSplitter(parent=self)
-        self.__right_split = QSplitter(parent=self)
-        self.__left_split.addWidget(self.group_view)
-        self.__left_split.addWidget(self.feed_view)
-        self.__left_split.setHandleWidth(4)
-        self.__right_split.addWidget(self.__left_split)
-        self.__right_split.addWidget(self.article_box)
-        self.__right_split.setHandleWidth(4)
+        self.__split = QSplitter(parent=self)
+        self.__split.addWidget(self.group_view)
+        self.__split.addWidget(self.feed_view)
+        self.__split.addWidget(self.article_box)
+        self.__split.setHandleWidth(4)
+        # self.__right_split.addWidget(self.__split)
         self.__main_layout = QVBoxLayout()
-        self.__main_layout.addWidget(self.__right_split)    
+        self.__main_layout.addWidget(self.__split)    
         self.setLayout(self.__main_layout)
     
     def get_user_groups(self,update=False):
@@ -58,29 +56,36 @@ class MainView(QWidget):
             print(e)
             
     def set_group(self,item,update=False):
-        if item.rss_type == "group" and (self.selected_group != item.text(0) or update):
+        if  (self.selected_group != item.text(0) or update):
             self.feed_view.clear_list()
             self.selected_group = item.text(0)
             art_list=[]
-            for index in item.url_indexes:
-                url = self.entry['urls'][index]
-                site = url["rss_title"]
-                for article in url["articles"]:
-                    article_bundle={
-                        "date" : DP.parse(article["pub_date"]),
-                        "title" : article["title"],
-                        "desc" : article["desc"],
-                        "seen" : article["seen"],
-                        "link" : article["link"],
-                        "site" : site,
-                    }
-                    art_list.append(article_bundle)
+            if item.rss_type == "group":
+                for index in item.url_indexes:
+                    url = self.entry['urls'][index]
+                    art_list.extend(self.get_gui_articles(url))
+            elif item.rss_type == "url":
+                url = self.entry['urls'][item.url_index]
+                art_list.extend(self.get_gui_articles(url))
             art_list = sorted(art_list, key = lambda x: (not x["seen"], x["date"].date()))
             for article in art_list:
                 self.feed_view.append_message(**article)
-        ix = self.feed_view.model().index(0, 0)
-        self.feed_view.selectionModel().setCurrentIndex(ix,QItemSelectionModel.SelectCurrent)
-
+    
+    def get_gui_articles(self,url):
+        site = url["rss_title"]
+        art_list=[]
+        for article in url["articles"]:
+            article_bundle={
+                "date" : DP.parse(article["pub_date"]),
+                "title" : article["title"],
+                "desc" : article["desc"],
+                "seen" : article["seen"],
+                "link" : article["link"],
+                "site" : site,
+            }
+            art_list.append(article_bundle)
+        return art_list
+    
     def set_article(self,current):
         try:
             row = [qmi.row() for qmi in self.feed_view.selectedIndexes()][0]

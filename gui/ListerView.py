@@ -23,15 +23,12 @@ class ListerView(QDialog):
 
     def mouseDoubleClickEvent(self):
         row = [qmi.row() for qmi in self.listView.selectedIndexes()][0]
-
         item = self.listView.model().item(row)
         checkState = item.checkState()
-
         if checkState == Qt.Checked:
             checkState = Qt.Unchecked
         else:
             checkState = Qt.Checked
-
         item.setCheckState(checkState)
 
     def enableButtonBox(self):
