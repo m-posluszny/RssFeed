@@ -22,7 +22,7 @@ class MainView(QWidget):
         self.feed_view = FeedView(self)
         self.article_box = ArticleBox(self)
         self.feed_view.selectionModel().selectionChanged.connect(self.set_article)
-        self.group_view.itemClicked.connect(self.set_group)
+        self.group_view.itemClicked.connect(self.refresh_feed)
         self.refresh_groups()
         self.__split = QSplitter(parent=self)
         self.__split.addWidget(self.group_view)
@@ -64,6 +64,8 @@ class MainView(QWidget):
             self.selected_group = item.text(0)
             art_list=[]
             if item.rss_type == "group":
+                # NOTE(mateusz): We don't always have the newst data about the articles so here we kinda have to go
+                # and ask the database again for this
                 for index in item.url_indexes:
                     url = self.entry['urls'][index]
                     art_list.extend(self.get_gui_articles(url))
@@ -90,16 +92,13 @@ class MainView(QWidget):
             art_list.append(article_bundle)
         return art_list
     
-    def set_article(self,current):
-        try:
-            row = [qmi.row() for qmi in self.feed_view.selectedIndexes()][0]
-            item = self.feed_view.model().item(row)
-            self.article_box.set_data(**item.article_bundle)
-            self.feed_view.set_seen(item,True)
+    def set_article(self, current):
+        row = [qmi.row() for qmi in self.feed_view.selectedIndexes()][0]
+        item = self.feed_view.model().item(row)
+        self.article_box.set_data(**item.article_bundle)
+        self.feed_view.set_seen(item,True)
 
-            URLHandler.setArticleSeen(item.article_bundle['link'], True)
-        except Exception as e:
-            print(e)
+        URLHandler.setArticleSeen(item.article_bundle['link'], True)
     
     def refresh_groups(self):
         dbh = DatabaseHandler()

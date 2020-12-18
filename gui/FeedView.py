@@ -1,5 +1,6 @@
 from PySide2.QtGui import QStandardItem, QStandardItemModel, QColor
 from PySide2.QtWidgets import QListView
+from PySide2.QtCore import QItemSelectionModel
 from datetime import datetime
 
 class FeedView(QListView):
@@ -10,7 +11,9 @@ class FeedView(QListView):
         self.setWordWrap(True)
 
     def clear_list(self):
+        oldState = self.selectionModel().blockSignals(True)
         self.__model.clear()
+        self.selectionModel().blockSignals(oldState)
 
     def append_message(self,site,title,desc,date,link,seen):
         if date.date() >= datetime.today().date():
