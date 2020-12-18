@@ -1,6 +1,5 @@
 from libs.databasehandler import DatabaseHandler
 from libs.credhandler import CredentialsHandler
-import json
 
 class GroupHandler:
     @staticmethod
@@ -14,7 +13,7 @@ class GroupHandler:
             return
 
         res['groups'][group] = []
-        dbh.addEntry(username, json.dumps(res))
+        dbh.addEntry(username, res)
 
     @staticmethod
     def removeGroup(group):
@@ -26,5 +25,5 @@ class GroupHandler:
         for i, entry in enumerate(res['groups']):
             if group in entry:
                 res['groups'].pop(group)
-                dbh.addEntry(username, json.dumps(res))
+                dbh.addEntry(username, res)
                 return

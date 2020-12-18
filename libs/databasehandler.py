@@ -1,7 +1,7 @@
 import lmdb
 import os 
 import shutil
-import json
+import pickle
 
 class DatabaseHandler:
     actualDatabase = None
@@ -36,6 +36,14 @@ class DatabaseHandler:
             key = key.encode()
             assert(isinstance(key, bytes))
 
+        value = pickle.dumps(value)
+        self.addEntryBytes(key, value)
+
+    def addEntryBytes(self, key, value):
+        if isinstance(key, str):
+            key = key.encode()
+            assert(isinstance(key, bytes))
+
         if isinstance(value, str):
             value = value.encode()
             assert(isinstance(value, bytes))
@@ -54,7 +62,7 @@ class DatabaseHandler:
         if value == None:
             return None
         else:
-            return json.loads(value)
+            return pickle.loads(value)
 
     def deleteEntry(self, key):
         if isinstance(key, str):

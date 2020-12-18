@@ -1,5 +1,4 @@
 import re
-import json
 from libs.databasehandler import DatabaseHandler
 from libs.credhandler import CredentialsHandler
 
@@ -23,7 +22,7 @@ class URLHandler:
                 }
 
         res['urls'].append(new_entry)
-        dbh.addEntry(username, json.dumps(res))
+        dbh.addEntry(username, res)
 
     def addURLToGroup(url, group):
         dbh = DatabaseHandler()
@@ -39,7 +38,7 @@ class URLHandler:
                 else:
                     res['groups'][group] = [i] 
 
-                dbh.addEntry(username, json.dumps(res))
+                dbh.addEntry(username, res)
                 return
 
     def removeURL(url):
@@ -58,7 +57,7 @@ class URLHandler:
                         hr = list(map(lambda x: x - 1, res['groups'][group][i + 1:]))
                         res['groups'][group] = hl + hr
 
-                dbh.addEntry(username, json.dumps(res))
+                dbh.addEntry(username, res)
 
                 return
 
@@ -72,7 +71,7 @@ class URLHandler:
             if entry['actual_url'] == url:
                 if group in res['groups']:
                     res['groups'][group].remove(i)
-                    dbh.addEntry(username, json.dumps(res))
+                    dbh.addEntry(username, res)
 
                 return
 
@@ -102,7 +101,7 @@ class URLHandler:
 
                         entry['articles'].append(nentry)
 
-        dbh.addEntry(username, json.dumps(res))
+        dbh.addEntry(username, res)
 
     def setArticleSeen(url, seen):
         dbh = DatabaseHandler()
@@ -116,7 +115,7 @@ class URLHandler:
                     res['urls'][i]['articles'][j]['seen'] = seen
                     break
 
-        dbh.addEntry(username, json.dumps(res))
+        dbh.addEntry(username, res)
 
     def getMostPopularURLs():
         pass
