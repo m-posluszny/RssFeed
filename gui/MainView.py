@@ -48,14 +48,18 @@ class MainView(QWidget):
         ix = self.group_view.model().index(0, 0)
         if not active_exists:
             self.group_view.selectionModel().setCurrentIndex(ix,QItemSelectionModel.SelectCurrent)
+
+        # NOTE(mateusz): I'm gonna put this into the pile of code that says "WHY DO WE NEED THIS?"
+        '''
         try:
             item = self.group_view.selectedItems()[0]
             self.set_group(item,update)
         except Exception as e:
             print(e)
+        '''
             
     def set_group(self,item,update=False):
-        if  (self.selected_group != item.text(0) or update):
+        if (self.selected_group != item.text(0) or update):
             self.feed_view.clear_list()
             self.selected_group = item.text(0)
             art_list=[]
@@ -99,7 +103,7 @@ class MainView(QWidget):
     
     def refresh_groups(self):
         dbh = DatabaseHandler()
-        self.entry = dbh.getEntry(CredentialsHandler.lastUsername) #
+        self.entry = dbh.getEntry(CredentialsHandler.lastUsername)
         self.get_user_groups(update=True)
     
     def refresh_feed(self):
