@@ -39,7 +39,7 @@ class URLHandler:
                     res['groups'][group] = [i] 
 
                 dbh.addEntry(username, res)
-                return
+                return i
 
     def removeURL(url):
         dbh = DatabaseHandler()
