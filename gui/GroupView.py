@@ -34,7 +34,7 @@ class GroupView(QTreeWidget):
         url_row.url_index = index
         self.urls[f"{group_name}_{url}"] = url_row
         self.groups[group_name].addChild(url_row)
-            
+        
     
     def remove_group(self,group_name):
         item = self.groups[group_name]
@@ -64,16 +64,14 @@ class GroupView(QTreeWidget):
     def showContextMenu(self, pos):
         item = self.itemAt(pos)
         assert(item.columnCount() >= 1)
-        self.right_clicked_item = item
 
         menu = QMenu()
-        menu.addAction(QAction('Refresh', self, triggered=self.menuRefreshCallback))
+        menu.addAction(QAction('Refresh', self, triggered=lambda: self.menuRefreshCallback(item)))
         menu.exec_(QCursor.pos())
 
-    def menuRefreshCallback(self):
-        if self.right_clicked_item.rss_type == 'url':
-            url = self.right_clicked_item.text(0)
-
+    def menuRefreshCallback(self,clicked_item):
+        if clicked_item.rss_type == 'url':
+            url = clicked_item.text(0)
             rssh = RSSHandler()
             rssh.fetchFromURL(url)
             if rssh.fetchIsSuccess():
@@ -83,8 +81,8 @@ class GroupView(QTreeWidget):
             URLHandler.appendDownloadedArticles(url, art)
             self.parent().parent().refresh_feed()
             
-        elif self.right_clicked_item.rss_type == 'group':
-            groupName = self.right_clicked_item.text(0)
+        elif clicked_item.rss_type == 'group':
+            groupName = clicked_item.text(0)
             dbh = DatabaseHandler()
             res = dbh.getEntry(CredentialsHandler.lastUsername)
 
