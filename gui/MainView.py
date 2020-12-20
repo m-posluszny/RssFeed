@@ -22,8 +22,11 @@ class MainView(QWidget):
         self.feed_view = FeedView(self)
         self.article_box = ArticleBox(self)
         self.feed_view.selectionModel().selectionChanged.connect(self.set_article)
-        self.group_view.itemClicked.connect(self.refresh_feed)
+        self.group_view.itemClicked.connect(lambda:self.refresh_feed(self.group_view.selectedItems()[0]))
         self.refresh_groups()
+        all_group = self.group_view.groups["All"]
+        all_group.setExpanded(True)
+        self.refresh_feed(self.group_view.groups["All"])
         self.__split = QSplitter(parent=self)
         self.__split.addWidget(self.group_view)
         self.__split.addWidget(self.feed_view)
@@ -48,15 +51,6 @@ class MainView(QWidget):
         ix = self.group_view.model().index(0, 0)
         if not active_exists:
             self.group_view.selectionModel().setCurrentIndex(ix,QItemSelectionModel.SelectCurrent)
-
-        # NOTE(mateusz): I'm gonna put this into the pile of code that says "WHY DO WE NEED THIS?"
-        '''
-        try:
-            item = self.group_view.selectedItems()[0]
-            self.set_group(item,update)
-        except Exception as e:
-            print(e)
-        '''
             
     def set_group(self,item,update=False):
         if (self.selected_group != item.text(0) or update):
@@ -66,8 +60,8 @@ class MainView(QWidget):
             if item.rss_type == "group":
                 for url_name in self.group_view.urls:
                     if item.text(0) in url_name:
-                        item = self.group_view.urls[url_name]
-                        url = self.entry['urls'][item.url_index]
+                        sub_item = self.group_view.urls[url_name]
+                        url = self.entry['urls'][sub_item.url_index]
                         art_list.extend(self.get_gui_articles(url))
             elif item.rss_type == "url":
                 url = self.entry['urls'][item.url_index]
@@ -104,10 +98,7 @@ class MainView(QWidget):
         self.entry = dbh.getEntry(CredentialsHandler.lastUsername)
         self.get_user_groups(update=True)
     
-    def refresh_feed(self):
+    def refresh_feed(self,item):
         dbh = DatabaseHandler()
-        # TODO(mateusz): Ask Michał if this has to be this way, in that I mean does it have to be .parent() for the selected item
-#        item = self.group_view.selectedItems()[0].parent()
-        item = self.group_view.selectedItems()[0]
         self.entry = dbh.getEntry(CredentialsHandler.lastUsername) 
         self.set_group(item,True)
