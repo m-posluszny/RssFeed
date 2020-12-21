@@ -18,8 +18,7 @@ class GroupView(QTreeWidget):
         self.addTopLevelItem(self.root)
         self.groups={}
         self.urls={}
-        self.add_group("All",[],[])
-
+        
     def add_group(self,group_name,urls,indexes):
         group_tree =  QTreeWidgetItem([group_name])
         group_tree.rss_type = "group"
@@ -79,7 +78,7 @@ class GroupView(QTreeWidget):
 
             art = rssh.returnArticles()
             URLHandler.appendDownloadedArticles(url, art)
-            self.parent().parent().refresh_feed()
+            self.parent().parent().refresh_feed(clicked_item)
             
         elif clicked_item.rss_type == 'group':
             groupName = clicked_item.text(0)
@@ -97,4 +96,4 @@ class GroupView(QTreeWidget):
                 art = rssh.returnArticles()
                 URLHandler.appendDownloadedArticles(url, art)
 
-            self.parent().parent().refresh_feed()
+            self.parent().parent().refresh_feed(clicked_item)

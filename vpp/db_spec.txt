@@ -6,6 +6,7 @@ Key: username
 Value: JSON
 
 JSON
+"username":
 {
     "password": "sha1sum of password",
     "urls": [
@@ -38,3 +39,8 @@ JSON
         "name": [ 0, 1, 2 ],
     },
 }
+"__all_urls_statistics__":
+[
+["https://xkcd.com/rss.xml",19],
+["https://buzzfeed.com/business.xml",20],
+]

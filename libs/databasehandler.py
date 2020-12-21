@@ -73,6 +73,17 @@ class DatabaseHandler:
         with DatabaseHandler.actualDatabase.begin(write=True) as outTxn:
             value = outTxn.delete(key)
         return value
+
+    def filterList(self):
+        stats = self.getEntry("__all_urls_statistics__")
+        if not stats:
+            return []
+        stats.sort(reverse=True, key=lambda entry: entry[1])
+        self.addEntry("__all_urls_statistics__",stats)
+        if len(stats)>5:
+            return stats[:5]
+        return stats
+                    
     
     def printEntry(self, key):
         res = self.getEntry(key)

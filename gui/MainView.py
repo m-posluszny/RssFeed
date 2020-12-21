@@ -39,19 +39,30 @@ class MainView(QWidget):
     def get_user_groups(self,update=False):
         group_dict = self.entry["groups"]
         active_exists = False
+        popular_name = URLHandler.popular_name
         self.group_view.clear()
+        if popular_name in group_dict:
+            print(group_dict[popular_name])
+            self.get_single_group(group_dict,popular_name)
+            group_dict.pop(popular_name)
         for group in group_dict:
-            indexes = group_dict[group]
-            urls = []
-            if self.selected_group == group:
-                active_exists = True
-            for index in indexes:
-                urls.append(self.entry['urls'][index]["actual_url"])
-            self.group_view.add_group(group,urls,indexes)
+            active_exists = self.get_single_group(group_dict,group)
         ix = self.group_view.model().index(0, 0)
         if not active_exists:
             self.group_view.selectionModel().setCurrentIndex(ix,QItemSelectionModel.SelectCurrent)
-            
+    
+    def get_single_group(self,group_dict,group):
+        active_exists = False
+        indexes = group_dict[group]
+        urls = []
+        if self.selected_group == group:
+            active_exists = True
+        for index in indexes:
+            print(self.entry['urls'][index]["actual_url"])
+            urls.append(self.entry['urls'][index]["actual_url"])
+        self.group_view.add_group(group,urls,indexes)
+        return active_exists
+    
     def set_group(self,item,update=False):
         if (self.selected_group != item.text(0) or update):
             self.feed_view.clear_list()

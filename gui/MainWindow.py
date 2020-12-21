@@ -42,7 +42,7 @@ class MainWindow(QMainWindow):
         self.__toolBar = self.menuBar()
         self.loadMenubar()
 
-        debugNoLogin = True
+        debugNoLogin = False
         if debugNoLogin:
             credHandler = CredentialsHandler('admin','admin')
             credHandler.encryptCredentials()
@@ -106,6 +106,11 @@ class MainWindow(QMainWindow):
 
         bar.addAction(addUrlGroupAction)
         bar.addAction(removeUrlGroupAction)
+        
+        showPopularAction = QAction("Show Popular URLs", self)
+        showPopularAction.triggered.connect(self.showPopularCallback)
+        
+        bar.addAction(showPopularAction)
         #themeMenu = QMenu("Theme",self)
         exitAction = QAction("Quit", self)
         exitAction.setShortcut("Ctrl-X")
@@ -120,7 +125,11 @@ class MainWindow(QMainWindow):
         user.addAction(exitAction)
         user.addAction(logoutAction)
 
-   
+
+    def showPopularCallback(self):
+        urls,indexes = URLHandler.getMostPopularURLs()
+        self.mainView.refresh_groups()
+    
     # TODO Move all menubar things to class MenuBar in gui
     def addURLCallback(self):
         res, ok = QInputDialog.getText(self, "Add URL", "Paste URL: ")

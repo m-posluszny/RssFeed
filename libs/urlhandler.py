@@ -1,8 +1,11 @@
+from libs.grouphandler import GroupHandler
 import re
 from libs.databasehandler import DatabaseHandler
 from libs.credhandler import CredentialsHandler
 
 class URLHandler:
+    popular_name ="Most Popular URLs"
+    
     def addURL(url):
         dbh = DatabaseHandler()
 
@@ -23,6 +26,21 @@ class URLHandler:
 
         res['urls'].append(new_entry)
         dbh.addEntry(username, res)
+        stats = dbh.getEntry("__all_urls_statistics__")
+        if stats == None:
+            stats = []
+            stats.append([url,1])
+            dbh.addEntry("__all_urls_statistics__",stats)
+            return
+        url_exists=False
+        for i,stat in enumerate(stats):
+            if url in stat:
+                url_exists=True
+                stats[i][1]+=1
+                break
+        if not url_exists:
+            stats.append([url,1])
+        dbh.addEntry("__all_urls_statistics__",stats)
 
     def addURLToGroup(url, group):
         dbh = DatabaseHandler()
@@ -58,7 +76,18 @@ class URLHandler:
                         res['groups'][group] = hl + hr
 
                 dbh.addEntry(username, res)
-
+                stats = dbh.getEntry("__all_urls_statistics__")
+                if stats == None:
+                    return
+                url_exists=False
+                for i,stat in enumerate(stats):
+                    if url in stat:
+                        url_exists=True
+                        stats[i][1]-=1
+                        break
+                if url_exists and stats[i][1] == 0:
+                    stats.pop(i)
+                dbh.addEntry("__all_urls_statistics__",stats)
                 return
 
     def removeURLFromGroup(url, group):
@@ -119,8 +148,28 @@ class URLHandler:
         dbh.addEntry(username, res)
 
     def getMostPopularURLs():
-        pass
-
+        dbh = DatabaseHandler()
+        groups = GroupHandler()
+        user= dbh.getEntry(CredentialsHandler.lastUsername)
+        if URLHandler.popular_name in user["groups"]:
+            groups.removeGroup(URLHandler.popular_name)
+        groups.addGroup(URLHandler.popular_name)
+        mostpopular = dbh.filterList()
+        add_to_user_urls=True
+        indexes = []
+        for stat in mostpopular:
+            url = stat[0]
+            idx = 0
+            for user_url in user["urls"]:
+                if user_url["actual_url"] == url:
+                    add_to_user_urls=False
+                    idx +=1
+            if add_to_user_urls:
+                idx = URLHandler.addURL(url)                
+            indexes.append(idx)
+            URLHandler.addURLToGroup(url,URLHandler.popular_name)
+        return mostpopular,indexes
+        
     def stringIsURL(self, url):
         regex = re.compile(
                 r'^(?:http|ftp)s?://' # http:// or https://
