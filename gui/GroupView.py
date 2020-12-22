@@ -19,15 +19,15 @@ class GroupView(QTreeWidget):
         self.groups={}
         self.urls={}
         
-    def add_group(self,group_name,urls,indexes):
+    def addGroup(self,group_name,urls,indexes):
         group_tree =  QTreeWidgetItem([group_name])
         group_tree.rss_type = "group"
         self.groups[group_name]=group_tree
         for url,idx in zip(urls,indexes):
-           self.add_url(url,group_name,idx)
+           self.addUrl(url,group_name,idx)
         self.addTopLevelItem(group_tree)
     
-    def add_url(self,url,group_name,index):
+    def addUrl(self,url,group_name,index):
         url_row = QTreeWidgetItem([url])
         url_row.rss_type = "url"
         url_row.url_index = index
@@ -35,7 +35,7 @@ class GroupView(QTreeWidget):
         self.groups[group_name].addChild(url_row)
         
     
-    def remove_group(self,group_name):
+    def removeGroup(self,group_name):
         item = self.groups[group_name]
         self.root.removeChild(item)
         self.groups.pop(group_name)
@@ -46,7 +46,7 @@ class GroupView(QTreeWidget):
         for rem in to_rem:
             self.urls.pop(rem)
         
-    def remove_url(self, url,group_name): #handles removing from all group if group_name set to all
+    def removeUrl(self, url,group_name): #handles removing from all group if group_name set to all
         if (group_name == "All"):
             for group in self.groups.keys():
                 url_id = f"{group}_{url}"

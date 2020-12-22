@@ -21,12 +21,12 @@ class MainView(QWidget):
         self.group_view = GroupView(self)
         self.feed_view = FeedView(self)
         self.article_box = ArticleBox(self)
-        self.feed_view.selectionModel().selectionChanged.connect(self.set_article)
-        self.group_view.itemClicked.connect(lambda:self.refresh_feed(self.group_view.selectedItems()[0]))
-        self.refresh_groups()
+        self.feed_view.selectionModel().selectionChanged.connect(self.setArticle)
+        self.group_view.itemClicked.connect(lambda:self.refreshFeed(self.group_view.selectedItems()[0]))
+        self.refreshGroups()
         all_group = self.group_view.groups["All"]
         all_group.setExpanded(True)
-        self.refresh_feed(self.group_view.groups["All"])
+        self.refreshFeed(self.group_view.groups["All"])
         self.__split = QSplitter(parent=self)
         self.__split.addWidget(self.group_view)
         self.__split.addWidget(self.feed_view)
@@ -36,22 +36,22 @@ class MainView(QWidget):
         self.__main_layout.addWidget(self.__split)    
         self.setLayout(self.__main_layout)
     
-    def get_user_groups(self,update=False):
+    def getUserGroups(self,update=False):
         group_dict = self.entry["groups"]
         active_exists = False
         popular_name = URLHandler.popular_name
         self.group_view.clear()
         if popular_name in group_dict:
             print(group_dict[popular_name])
-            self.get_single_group(group_dict,popular_name)
+            self.getSingleGroup(group_dict,popular_name)
             group_dict.pop(popular_name)
         for group in group_dict:
-            active_exists = self.get_single_group(group_dict,group)
+            active_exists = self.getSingleGroup(group_dict,group)
         ix = self.group_view.model().index(0, 0)
         if not active_exists:
             self.group_view.selectionModel().setCurrentIndex(ix,QItemSelectionModel.SelectCurrent)
     
-    def get_single_group(self,group_dict,group):
+    def getSingleGroup(self,group_dict,group):
         active_exists = False
         indexes = group_dict[group]
         urls = []
@@ -60,12 +60,12 @@ class MainView(QWidget):
         for index in indexes:
             print(self.entry['urls'][index]["actual_url"])
             urls.append(self.entry['urls'][index]["actual_url"])
-        self.group_view.add_group(group,urls,indexes)
+        self.group_view.addGroup(group,urls,indexes)
         return active_exists
     
-    def set_group(self,item,update=False):
+    def setGroup(self,item,update=False):
         if (self.selected_group != item.text(0) or update):
-            self.feed_view.clear_list()
+            self.feed_view.clearList()
             self.selected_group = item.text(0)
             art_list=[]
             if item.rss_type == "group":
@@ -73,15 +73,15 @@ class MainView(QWidget):
                     if item.text(0) in url_name:
                         sub_item = self.group_view.urls[url_name]
                         url = self.entry['urls'][sub_item.url_index]
-                        art_list.extend(self.get_gui_articles(url))
+                        art_list.extend(self.getGuiArticles(url))
             elif item.rss_type == "url":
                 url = self.entry['urls'][item.url_index]
-                art_list.extend(self.get_gui_articles(url))
+                art_list.extend(self.getGuiArticles(url))
             art_list = sorted(art_list, key = lambda x: (not x["seen"], x["date"]))
             for article in art_list:
-                self.feed_view.append_message(**article)
+                self.feed_view.appendMessage(**article)
     
-    def get_gui_articles(self,url):
+    def getGuiArticles(self,url):
         site = url["rss_title"]
         art_list=[]
         for article in url["articles"]:
@@ -96,20 +96,20 @@ class MainView(QWidget):
             art_list.append(article_bundle)
         return art_list
     
-    def set_article(self, current):
+    def setArticle(self, current):
         row = [qmi.row() for qmi in self.feed_view.selectedIndexes()][0]
         item = self.feed_view.model().item(row)
-        self.article_box.set_data(**item.article_bundle)
-        self.feed_view.set_seen(item,True)
+        self.article_box.setData(**item.article_bundle)
+        self.feed_view.setSeen(item,True)
 
         URLHandler.setArticleSeen(item.article_bundle['link'], True)
     
-    def refresh_groups(self):
+    def refreshGroups(self):
         dbh = DatabaseHandler()
         self.entry = dbh.getEntry(CredentialsHandler.lastUsername)
-        self.get_user_groups(update=True)
+        self.getUserGroups(update=True)
     
-    def refresh_feed(self,item):
+    def refreshFeed(self,item):
         dbh = DatabaseHandler()
         self.entry = dbh.getEntry(CredentialsHandler.lastUsername) 
-        self.set_group(item,True)
+        self.setGroup(item,True)
