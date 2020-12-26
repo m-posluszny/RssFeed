@@ -129,8 +129,8 @@ class MainWindow(QMainWindow):
             urlh = URLHandler()
             if urlh.stringIsURL(res):
                 URLHandler.addURL(res)
-                URLHandler.addURLToGroup(res, 'All')
-                self.mainView.refresh_groups()
+                index = URLHandler.addURLToGroup(res, 'All')
+                self.mainView.group_view.add_url(res,'All',index)
             else:
                 print('it\'s not a url')
 
@@ -151,13 +151,13 @@ class MainWindow(QMainWindow):
             reslist = ls.getResults()
             for res in reslist:
                 URLHandler.removeURL(res)
-            self.mainView.refresh_groups()
+                self.mainView.group_view.remove_url(res,"All")
 
     def addGroupCallback(self):
         res, ok = QInputDialog.getText(self, "Group URL", "Enter group name: ")
         if ok:
             GroupHandler.addGroup(res)
-            self.mainView.refresh_groups()
+            self.mainView.group_view.add_group(res,[],[])
              
             
     def removeGroupCallback(self):
@@ -174,8 +174,8 @@ class MainWindow(QMainWindow):
             reslist = ls.getResults()
             for res in reslist:
                 GroupHandler.removeGroup(res)
-            self.mainView.refresh_groups()
-
+                self.mainView.group_view.remove_group(res)
+                
     def addURLToGroupCallback(self):
         w = QWidget()
         f = QHBoxLayout(w)
@@ -210,9 +210,8 @@ class MainWindow(QMainWindow):
 
             for group in groups:
                 for url in urls:
-                    URLHandler.addURLToGroup(url, group)
-
-            self.mainView.refresh_groups()
+                    index = URLHandler.addURLToGroup(url, group)
+                    self.mainView.group_view.add_url(url,group,index)
 
     def removeURLFromGroupCallback(self):
         w = QWidget()
@@ -249,8 +248,7 @@ class MainWindow(QMainWindow):
             for group in groups:
                 for url in urls:
                     URLHandler.removeURLFromGroup(url, group)
-
-            self.mainView.refresh_groups()
+                    self.mainView.group_view.remove_url(url,group)
             
     def logoutCallback(self):
         self.showLogin()

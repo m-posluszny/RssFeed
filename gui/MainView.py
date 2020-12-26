@@ -64,11 +64,11 @@ class MainView(QWidget):
             self.selected_group = item.text(0)
             art_list=[]
             if item.rss_type == "group":
-                # NOTE(mateusz): We don't always have the newst data about the articles so here we kinda have to go
-                # and ask the database again for this
-                for index in item.url_indexes:
-                    url = self.entry['urls'][index]
-                    art_list.extend(self.get_gui_articles(url))
+                for url_name in self.group_view.urls:
+                    if item.text(0) in url_name:
+                        item = self.group_view.urls[url_name]
+                        url = self.entry['urls'][item.url_index]
+                        art_list.extend(self.get_gui_articles(url))
             elif item.rss_type == "url":
                 url = self.entry['urls'][item.url_index]
                 art_list.extend(self.get_gui_articles(url))

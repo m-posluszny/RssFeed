@@ -10,22 +10,57 @@ class GroupView(QTreeWidget):
     
     def __init__(self,parent=None):
         super().__init__(parent=parent)
+        self.root = self.invisibleRootItem()
         self.setColumnCount(1)
         self.setHeaderHidden(True)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.showContextMenu)
+        self.addTopLevelItem(self.root)
+        self.groups={}
+        self.urls={}
+        self.add_group("All",[],[])
 
     def add_group(self,group_name,urls,indexes):
         group_tree =  QTreeWidgetItem([group_name])
         group_tree.rss_type = "group"
+        self.groups[group_name]=group_tree
         for url,idx in zip(urls,indexes):
-            url_row = QTreeWidgetItem([url])
-            url_row.rss_type = "url"
-            url_row.url_index = idx
-            group_tree.addChild(url_row)
-        group_tree.url_indexes = indexes
+           self.add_url(url,group_name,idx)
         self.addTopLevelItem(group_tree)
     
+    def add_url(self,url,group_name,index):
+        url_row = QTreeWidgetItem([url])
+        url_row.rss_type = "url"
+        url_row.url_index = index
+        self.urls[f"{group_name}_{url}"] = url_row
+        self.groups[group_name].addChild(url_row)
+            
+    
+    def remove_group(self,group_name):
+        item = self.groups[group_name]
+        self.root.removeChild(item)
+        self.groups.pop(group_name)
+        to_rem = []
+        for url_id in self.urls.keys():
+            if group_name in url_id:
+                to_rem.append(url_id)
+        for rem in to_rem:
+            self.urls.pop(rem)
+        
+    def remove_url(self, url,group_name): #handles removing from all group if group_name set to all
+        if (group_name == "All"):
+            for group in self.groups.keys():
+                url_id = f"{group}_{url}"
+                if url_id in self.urls:
+                    item = self.urls[url_id]
+                    self.groups[group_name].removeChild(item)
+                    self.urls.pop(url_id)
+        else:
+            url_id = f"{group_name}_{url}"
+            item = self.url[url_id]
+            self.groups[group_name].removeChild(item)
+            self.urls.pop(url_id)
+
     def showContextMenu(self, pos):
         item = self.itemAt(pos)
         assert(item.columnCount() >= 1)
