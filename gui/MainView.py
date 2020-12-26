@@ -8,7 +8,7 @@ from libs.databasehandler import DatabaseHandler
 import dateutil.parser as DP
 from PySide2.QtWidgets import (
     QSplitter,
-    QVBoxLayout,
+    QHBoxLayout,
     QWidget
     
 )
@@ -24,13 +24,16 @@ class MainView(QWidget):
         self.feed_view.selectionModel().selectionChanged.connect(self.set_article)
         self.group_view.itemClicked.connect(self.refresh_feed)
         self.refresh_groups()
-        self.__split = QSplitter(parent=self)
-        self.__split.addWidget(self.group_view)
-        self.__split.addWidget(self.feed_view)
-        self.__split.addWidget(self.article_box)
-        self.__split.setHandleWidth(4)
-        self.__main_layout = QVBoxLayout()
-        self.__main_layout.addWidget(self.__split)    
+#        self.__split = QSplitter(parent=self)
+#        self.__split.addWidget(self.group_view)
+#        self.__split.addWidget(self.feed_view)
+#        self.__split.addWidget(self.article_box)
+#        self.__split.setHandleWidth(4)
+        self.__main_layout = QHBoxLayout()
+        self.__main_layout.addWidget(self.group_view)
+        self.__main_layout.addWidget(self.feed_view)
+        self.__main_layout.addWidget(self.article_box)
+#        self.__main_layout.addWidget(self.__split)    
         self.setLayout(self.__main_layout)
     
     def get_user_groups(self,update=False):
@@ -46,8 +49,9 @@ class MainView(QWidget):
                 urls.append(self.entry['urls'][index]["actual_url"])
             self.group_view.add_group(group,urls,indexes)
         ix = self.group_view.model().index(0, 0)
-        if not active_exists:
-            self.group_view.selectionModel().setCurrentIndex(ix,QItemSelectionModel.SelectCurrent)
+        # NOTE(mateusz): This takes 40ms at start-up and does nothing.
+        #if not active_exists:
+        #    self.group_view.selectionModel().setCurrentIndex(ix,QItemSelectionModel.SelectCurrent)
 
         # NOTE(mateusz): I'm gonna put this into the pile of code that says "WHY DO WE NEED THIS?"
         '''
