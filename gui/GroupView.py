@@ -56,9 +56,10 @@ class GroupView(QTreeWidget):
                     self.urls.pop(url_id)
         else:
             url_id = f"{group_name}_{url}"
-            item = self.url[url_id]
-            self.groups[group_name].removeChild(item)
-            self.urls.pop(url_id)
+            if url_id in self.urls:
+                item = self.urls[url_id]
+                self.groups[group_name].removeChild(item)
+                self.urls.pop(url_id)
 
     def showContextMenu(self, pos):
         item = self.itemAt(pos)
@@ -78,7 +79,7 @@ class GroupView(QTreeWidget):
 
             art = rssh.returnArticles()
             URLHandler.appendDownloadedArticles(url, art)
-            self.parent().parent().refresh_feed(clicked_item)
+            self.parent().parent().refreshFeed(clicked_item)
             
         elif clicked_item.rss_type == 'group':
             groupName = clicked_item.text(0)
@@ -96,4 +97,4 @@ class GroupView(QTreeWidget):
                 art = rssh.returnArticles()
                 URLHandler.appendDownloadedArticles(url, art)
 
-            self.parent().parent().refresh_feed(clicked_item)
+            self.parent().parent().refreshFeed(clicked_item)

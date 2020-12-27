@@ -9,7 +9,7 @@ import dateutil.parser as DP
 from PySide2.QtWidgets import (
     QSplitter,
     QHBoxLayout,
-    QWidget
+    QWidget,
     
 )
 
@@ -32,7 +32,7 @@ class MainView(QWidget):
         self.__split.addWidget(self.feed_view)
         self.__split.addWidget(self.article_box)
         self.__split.setHandleWidth(4)
-        self.__main_layout = QVBoxLayout()
+        self.__main_layout = QHBoxLayout()
         self.__main_layout.addWidget(self.__split)    
         self.setLayout(self.__main_layout)
     
