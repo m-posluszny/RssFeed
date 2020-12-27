@@ -42,7 +42,7 @@ class MainView(QWidget):
         popular_name = URLHandler.popular_name
         self.group_view.clear()
         if popular_name in group_dict:
-            print(group_dict[popular_name])
+#            print(group_dict[popular_name])
             self.getSingleGroup(group_dict,popular_name)
             group_dict.pop(popular_name)
         for group in group_dict:
@@ -72,7 +72,7 @@ class MainView(QWidget):
         if self.selected_group == group:
             active_exists = True
         for index in indexes:
-            print(self.entry['urls'][index]["actual_url"])
+#            print(self.entry['urls'][index]["actual_url"])
             urls.append(self.entry['urls'][index]["actual_url"])
         self.group_view.addGroup(group,urls,indexes)
         return active_exists

@@ -8,6 +8,7 @@ from libs.credhandler import CredentialsHandler
 from libs.databasehandler import DatabaseHandler
 from pyside_material import apply_stylesheet
 from PySide2.QtCore import Qt
+from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import (
     QMainWindow,
     QDesktopWidget,
@@ -46,7 +47,12 @@ class MainWindow(QMainWindow):
         else:
             self.showLogin()
 
+        self.setIcon()
         self.show()
+
+    def setIcon(self):
+        icon = QIcon('res/icon.png')
+        self.setWindowIcon(icon)
 
     def center(self):
         qRect = self.frameGeometry()
