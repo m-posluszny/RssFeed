@@ -3,10 +3,10 @@
 
 ## Wstęp
 ### Opis działania
-#### Aplikacja umożliwia użytkownikowi stworzenie konta w którym bedzie mógł stworzyć grupygdzie będzie mógł dodawać URL stron które go interesują i je przeglądać
+#### Aplikacja pozwala użytkownikowi zapisywać URL stron wybranych przez niego jak i ich zapisywanie oraz ich przeglądanie 
 ## Instalacja
 ### Wymagania systemowe:
-* Wersja Pythona Python 3.7.7
+* Wersja Pythona: Python 3.7.7
 * Windows, Linux
     * Na komputerze w Start wpisać cmd, zostanie otwarty terminal w którym trzeba wpisać poniższe polecenie.
 
