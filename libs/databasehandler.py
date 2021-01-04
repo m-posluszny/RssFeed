@@ -1,7 +1,7 @@
-import plyvel
+import lmdb
 import os 
 import shutil
-import json
+import pickle
 
 class DatabaseHandler:
     actualDatabase = None
@@ -14,20 +14,17 @@ class DatabaseHandler:
     def __createDatabase(path):
         if not os.path.exists(path):
             os.makedirs(path)
-        DatabaseHandler.actualDatabase = plyvel.DB(path, create_if_missing=True)
+        DatabaseHandler.actualDatabase = lmdb.open(path)
         DatabaseHandler.actualDatabasePath = path
 
     @staticmethod
     def destroyDatabase():
         del DatabaseHandler.actualDatabase
-        plyvel.destroy_db(DatabaseHandler.actualDatabasePath)
         DatabaseHandler.actualDatabase = None
+        if os.path.exists(DatabaseHandler.actualDatabasePath):
+            shutil.rmtree(DatabaseHandler.actualDatabasePath)
         DatabaseHandler.actualDatabasePath = ''
         DatabaseHandler.dbIsTemp = False
-
-    @property
-    def databaseOnline(self):
-        return not DatabaseHandler.actualDatabase.closed
 
     def __init__(self, db_path = './tmp/', dbIsTemp = False):
         if DatabaseHandler.actualDatabase == None:
@@ -39,29 +36,54 @@ class DatabaseHandler:
             key = key.encode()
             assert(isinstance(key, bytes))
 
+        value = pickle.dumps(value)
+        self.addEntryBytes(key, value)
+
+    def addEntryBytes(self, key, value):
+        if isinstance(key, str):
+            key = key.encode()
+            assert(isinstance(key, bytes))
+
         if isinstance(value, str):
             value = value.encode()
             assert(isinstance(value, bytes))
 
-        DatabaseHandler.actualDatabase.put(key, value)
+        with DatabaseHandler.actualDatabase.begin(write=True) as inTxn:
+            inTxn.put(key, value)
 
     def getEntry(self, key):
         if isinstance(key, str):
             key = key.encode()
             assert(isinstance(key, bytes))
 
-        value = DatabaseHandler.actualDatabase.get(key)
+        value = None
+        with DatabaseHandler.actualDatabase.begin(write=True) as outTxn:
+            value = outTxn.get(key)
         if value == None:
             return None
         else:
-            return json.loads(value)
+            return pickle.loads(value)
 
     def deleteEntry(self, key):
         if isinstance(key, str):
             key = key.encode()
             assert(isinstance(key, bytes))
 
-        return DatabaseHandler.actualDatabase.delete(key)
+        value = None
+        with DatabaseHandler.actualDatabase.begin(write=True) as outTxn:
+            value = outTxn.delete(key)
+        return value
+
+    def filterList(self):
+        stats = self.getEntry("__all_urls_statistics__")
+        if not stats:
+            return []
+        stats.sort(reverse=True, key=lambda entry: entry[1])
+        self.addEntry("__all_urls_statistics__",stats)
+        if len(stats)>5:
+            return stats[:5]
+        return stats
+                    
     
     def printEntry(self, key):
         res = self.getEntry(key)

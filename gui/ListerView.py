@@ -9,7 +9,7 @@ class ListerView(QDialog):
         form = QFormLayout(self)
         form.addRow(QLabel(message))
         self.listView = QListView(self)
-        self.listView.doubleClicked.connect(self.mouseDoubleClickEvent)
+        self.listView.clicked.connect(self.mouseClickEvent)
         form.addRow(self.listView)
         model = QStandardItemModel(self.listView)
         self.setWindowTitle(title)
@@ -21,23 +21,22 @@ class ListerView(QDialog):
             model.appendRow(standardItem)
         self.listView.setModel(model)
 
-        buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, Qt.Horizontal, self)
-        form.addRow(buttonBox)
-        buttonBox.accepted.connect(self.accept)
-        buttonBox.rejected.connect(self.reject)
-
-    def mouseDoubleClickEvent(self):
+    def mouseClickEvent(self):
         row = [qmi.row() for qmi in self.listView.selectedIndexes()][0]
-
         item = self.listView.model().item(row)
         checkState = item.checkState()
-
         if checkState == Qt.Checked:
             checkState = Qt.Unchecked
         else:
             checkState = Qt.Checked
-
         item.setCheckState(checkState)
+
+    def enableButtonBox(self):
+        form = self.layout()
+        buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, Qt.Horizontal, self)
+        form.addRow(buttonBox)
+        buttonBox.accepted.connect(self.accept)
+        buttonBox.rejected.connect(self.reject)
 
     def getResults(self):
         selected = []

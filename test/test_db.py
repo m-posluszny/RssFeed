@@ -6,35 +6,24 @@ class TestURLHandler(unittest.TestCase):
     def test_basic_operations(self):
         db = DatabaseHandler(db_path = "pytests/", dbIsTemp = True)
 
-        self.assertEqual(db.databaseOnline, True)
-
-        db.addEntry('testkey', '\"testvalue\"')
-
-        self.assertEqual(db.databaseOnline, True)
+        db.addEntry('testkey', 'testvalue')
 
         res = db.getEntry('testkey')
-        self.assertEqual(res, "testvalue")
+        self.assertEqual(res, 'testvalue')
 
         res = db.deleteEntry('testkey')
-        self.assertEqual(res, None)
+        self.assertEqual(res, True)
 
         res = db.getEntry('nonvalidtestkey')
         self.assertEqual(res, None)
 
         DatabaseHandler.destroyDatabase()
 
-    def test_json_storing(self):
-        import json
+    def test_pickle_storing(self):
         db = DatabaseHandler(db_path = "pytests/", dbIsTemp = True)
 
-        self.assertEqual(db.databaseOnline, True)
-
         l = [str(i) for i in range(100)]
-        asStr = json.dumps(l)
-
-        db.addEntry('testkey', asStr)
-
-        self.assertEqual(db.databaseOnline, True)
+        db.addEntry('testkey', l)
 
         res = db.getEntry('testkey')
         self.assertNotEqual(res, None)

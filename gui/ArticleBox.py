@@ -1,9 +1,8 @@
-import PySide2
-from PySide2 import QtWidgets
-from PySide2.QtGui import QFont, QImage, QPixmap
+from PySide2.QtGui import QFont
 from PySide2.QtWidgets import (QLabel, QPushButton, QVBoxLayout,QFrame,QSizePolicy)
-from PySide2.QtCore import QSize, Qt
+from PySide2.QtCore import Qt
 from PySide2.QtWebEngineWidgets import QWebEngineView
+import webbrowser
 
 class ArticleBox(QFrame):
     
@@ -27,20 +26,32 @@ class ArticleBox(QFrame):
         self.__label.setFont(__label_font)
         self.__content_box=QWebEngineView()
         self.__content_box.setMinimumSize(300,300)
-        self.__content_box.setContextMenuPolicy(Qt.NoContextMenu)
+       # self.__content_box.setContextMenuPolicy(Qt.NoContextMenu)
         self.__content_box.setSizePolicy(QSizePolicy.MinimumExpanding,QSizePolicy.MinimumExpanding)
+        self.__content_box.loadStarted.connect(self.loadStartedCallback)
+        self.__content_box.loadFinished.connect(self.loadFinishedCallback)
         self.__link_btn = QPushButton()
         self.__link_btn.setFlat(True)
+        self.__link_btn.clicked.connect(self.openLink)
         self.__layout.addWidget(self.__label)
         self.__layout.addWidget(self.__site)
         self.__layout.addWidget(self.__content_box)
         self.__layout.addWidget(self.__link_btn, alignment=Qt.AlignCenter)
         self.setLayout(self.__layout)
+
+    def loadStartedCallback(self):
+        print('Web view load started...')
+
+    def loadFinishedCallback(self):
+        print('Web view load finished.')
         
-    def set_data(self,site,link,title,article):
-        self.__content_box.setHtml(article)
-        self.__link_btn.setText(f"Read more on {link}")
+    def setData(self,site,link,title,article):
+        self.__content_box.setHtml(article, link)
+        self.__link_btn.setText(f"Read more")
+        ##add webbrowser handling
+        self.__link = link
         self.__site.setText(site)
         self.__label.setText(title)
         
-    
+    def openLink(self):
+        webbrowser.open_new_tab(self.__link)
