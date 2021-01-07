@@ -21,7 +21,7 @@ class FeedView(QListView):
         if (date.tm_year == today.tm_year) and (date.tm_yday == today.tm_yday):
             row_date = "{:02d}:{:02d}".format(date.tm_hour, date.tm_min)
         else:
-            row_date = "{} {}, {}".format(
+            row_date = "{:02d}.{:02d}.{:02d}".format(
                 date.tm_mday, date.tm_mon, date.tm_year)
         text = f"{title}   {site}\n{row_date}"
         new_item = QStandardItem(text)
