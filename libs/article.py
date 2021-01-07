@@ -1,10 +1,12 @@
 from libs.rss import RSSHeader
 
+
 class Article:
     def __init__(self, title, link, desc, date, dateParsed):
         self.__header = RSSHeader(title, link, desc)
         self.__date = date
         self.__dateParsed = dateParsed
+
     def __str__(self):
         return "[{}][{}][{}][{}]".format(self.title, self.__date, self.link, self.content)
 
@@ -25,5 +27,5 @@ class Article:
         return self.__date
 
     @property
-    def pubDateParsed(self):
+    def pub_date_parsed(self):
         return self.__dateParsed

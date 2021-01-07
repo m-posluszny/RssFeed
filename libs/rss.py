@@ -1,5 +1,5 @@
 class RSSHeader:
-    def __init__(self, title = '', link = '', desc = ''):
+    def __init__(self, title='', link='', desc=''):
         self.__title = title
         self.__link = link
         self.__desc = desc

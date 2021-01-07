@@ -1,33 +1,34 @@
 import unittest
 from libs.databasehandler import DatabaseHandler
 
+
 class TestURLHandler(unittest.TestCase):
 
     def test_basic_operations(self):
-        db = DatabaseHandler(db_path = "pytests/", dbIsTemp = True)
+        db = DatabaseHandler(db_path="pytests/", dbIsTemp=True)
 
-        db.addEntry('testkey', 'testvalue')
+        db.add_entry('testkey', 'testvalue')
 
-        res = db.getEntry('testkey')
+        res = db.get_entry('testkey')
         self.assertEqual(res, 'testvalue')
 
-        res = db.deleteEntry('testkey')
+        res = db.delete_entry('testkey')
         self.assertEqual(res, True)
 
-        res = db.getEntry('nonvalidtestkey')
+        res = db.get_entry('nonvalidtestkey')
         self.assertEqual(res, None)
 
-        DatabaseHandler.destroyDatabase()
+        DatabaseHandler.destroy_database()
 
     def test_pickle_storing(self):
-        db = DatabaseHandler(db_path = "pytests/", dbIsTemp = True)
+        db = DatabaseHandler(db_path="pytests/", dbIsTemp=True)
 
         l = [str(i) for i in range(100)]
-        db.addEntry('testkey', l)
+        db.add_entry('testkey', l)
 
-        res = db.getEntry('testkey')
+        res = db.get_entry('testkey')
         self.assertNotEqual(res, None)
 
         self.assertEqual(res, l)
 
-        DatabaseHandler.destroyDatabase()
+        DatabaseHandler.destroy_database()

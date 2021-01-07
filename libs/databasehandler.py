@@ -1,7 +1,8 @@
 import lmdb
-import os 
+import os
 import shutil
 import pickle
+
 
 class DatabaseHandler:
     actualDatabase = None
@@ -11,14 +12,14 @@ class DatabaseHandler:
     # TODO(mateusz): Read about cross platform home directory and use it to create
     # the database
     @staticmethod
-    def __createDatabase(path):
+    def __create_database(path):
         if not os.path.exists(path):
             os.makedirs(path)
         DatabaseHandler.actualDatabase = lmdb.open(path)
         DatabaseHandler.actualDatabasePath = path
 
     @staticmethod
-    def destroyDatabase():
+    def destroy_database():
         del DatabaseHandler.actualDatabase
         DatabaseHandler.actualDatabase = None
         if os.path.exists(DatabaseHandler.actualDatabasePath):
@@ -26,20 +27,20 @@ class DatabaseHandler:
         DatabaseHandler.actualDatabasePath = ''
         DatabaseHandler.dbIsTemp = False
 
-    def __init__(self, db_path = './tmp/', dbIsTemp = False):
+    def __init__(self, db_path='./tmp/', dbIsTemp=False):
         if DatabaseHandler.actualDatabase == None:
             DatabaseHandler.dbIsTemp = dbIsTemp
-            DatabaseHandler.__createDatabase(db_path)
+            DatabaseHandler.__create_database(db_path)
 
-    def addEntry(self, key, value):
+    def add_entry(self, key, value):
         if isinstance(key, str):
             key = key.encode()
             assert(isinstance(key, bytes))
 
         value = pickle.dumps(value)
-        self.addEntryBytes(key, value)
+        self.add_entry_bytes(key, value)
 
-    def addEntryBytes(self, key, value):
+    def add_entry_bytes(self, key, value):
         if isinstance(key, str):
             key = key.encode()
             assert(isinstance(key, bytes))
@@ -51,7 +52,7 @@ class DatabaseHandler:
         with DatabaseHandler.actualDatabase.begin(write=True) as inTxn:
             inTxn.put(key, value)
 
-    def getEntry(self, key):
+    def get_entry(self, key):
         if isinstance(key, str):
             key = key.encode()
             assert(isinstance(key, bytes))
@@ -64,7 +65,7 @@ class DatabaseHandler:
         else:
             return pickle.loads(value)
 
-    def deleteEntry(self, key):
+    def delete_entry(self, key):
         if isinstance(key, str):
             key = key.encode()
             assert(isinstance(key, bytes))
@@ -74,18 +75,16 @@ class DatabaseHandler:
             value = outTxn.delete(key)
         return value
 
-    def filterList(self):
-        stats = self.getEntry("__all_urls_statistics__")
+    def filter_list(self):
+        stats = self.get_entry("__all_urls_statistics__")
         if not stats:
             return []
         stats.sort(reverse=True, key=lambda entry: entry[1])
-        self.addEntry("__all_urls_statistics__",stats)
-        if len(stats)>5:
+        self.add_entry("__all_urls_statistics__", stats)
+        if len(stats) > 5:
             return stats[:5]
         return stats
-                    
-    
-    def printEntry(self, key):
-        res = self.getEntry(key)
 
+    def print_entry(self, key):
+        res = self.get_entry(key)
         print(key, res)

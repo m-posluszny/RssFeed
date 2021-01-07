@@ -1,31 +1,32 @@
 import unittest
 from libs.rsshandler import RSSHandler
 
+
 class TestURLHandler(unittest.TestCase):
 
     def test_correct_usage(self):
         rssh = RSSHandler()
 
-        rssh.fetchFromURL('https://xkcd.com/rss.xml')
-        self.assertEqual(rssh.fetchIsSuccess(), True)
+        rssh.fetch_from_url('https://xkcd.com/rss.xml')
+        self.assertEqual(rssh.fetch_is_success(), True)
 
-        rssh.parseXML()
-        self.assertNotEqual(len(rssh.returnArticles()), 0)
+        rssh.parse_xml()
+        self.assertNotEqual(len(rssh.return_articles()), 0)
 
     def test_incorrect_usage(self):
         rssh = RSSHandler()
 
-        self.assertEqual(rssh.fetchIsSuccess(), False)
+        self.assertEqual(rssh.fetch_is_success(), False)
 
     def test_correct_article_print(self):
         rssh = RSSHandler()
 
-        rssh.fetchFromURL('https://xkcd.com/rss.xml')
-        self.assertEqual(rssh.fetchIsSuccess(), True)
+        rssh.fetch_from_url('https://xkcd.com/rss.xml')
+        self.assertEqual(rssh.fetch_is_success(), True)
 
-        rssh.parseXML()
-        
-        a = rssh.returnArticles()
+        rssh.parse_xml()
+
+        a = rssh.return_articles()
         self.assertNotEqual(len(a), 0)
 
         s = '{}'.format(a[0])

@@ -16,122 +16,124 @@ from PySide2.QtWidgets import (
     QWidget,
 )
 
+
 class MenuBar:
-    
-    def __init__(self,menuBar,parent=None):
+
+    def __init__(self, menuBar, parent=None):
         self.bar = menuBar
         self.mainView = None
         self.parent = parent
+        self.hide_bar()
         user = self.bar.addMenu("App")
-        self.hideBar()
-        addURLAction = QAction("Add URL", parent)
-        addURLAction.triggered.connect(self.addURLCallback)
+        add_urlAction = QAction("Add URL", parent)
+        add_urlAction.triggered.connect(self.add_url_callback)
 
-        removeURLAction = QAction("Remove URL", parent)
-        removeURLAction.triggered.connect(self.removeURLCallback)
-        self.bar.addAction(addURLAction)
-        self.bar.addAction(removeURLAction)
-    
-        addGroupAction = QAction("Add Group", parent)
-        addGroupAction.triggered.connect(self.addGroupCallback)
+        remove_urlAction = QAction("Remove URL", parent)
+        remove_urlAction.triggered.connect(self.remove_url_callback)
+        self.bar.addAction(add_urlAction)
+        self.bar.addAction(remove_urlAction)
 
-        removeGroupAction = QAction("Remove Group", parent)
-        removeGroupAction.triggered.connect(self.removeGroupCallback)
-        
-        self.bar.addAction(addGroupAction)
-        self.bar.addAction(removeGroupAction)
-        
-        addUrlGroupAction = QAction("Add URL to Group", parent)
-        addUrlGroupAction.triggered.connect(self.addURLToGroupCallback)
+        add_groupAction = QAction("Add Group", parent)
+        add_groupAction.triggered.connect(self.add_group_callback)
 
-        removeUrlGroupAction = QAction("Remove URL from Group", parent)
-        removeUrlGroupAction.triggered.connect(self.removeURLFromGroupCallback)
+        remove_groupAction = QAction("Remove Group", parent)
+        remove_groupAction.triggered.connect(self.remove_group_callback)
 
-        self.bar.addAction(addUrlGroupAction)
-        self.bar.addAction(removeUrlGroupAction)
-        
+        self.bar.addAction(add_groupAction)
+        self.bar.addAction(remove_groupAction)
+
+        add_urlGroupAction = QAction("Add URL to Group", parent)
+        add_urlGroupAction.triggered.connect(self.add_url_to_group_callback)
+
+        remove_urlGroupAction = QAction("Remove URL from Group", parent)
+        remove_urlGroupAction.triggered.connect(
+            self.remove_url_from_group_callback)
+
+        self.bar.addAction(add_urlGroupAction)
+        self.bar.addAction(remove_urlGroupAction)
+
         showPopularAction = QAction("Show Popular URLs", parent)
-        showPopularAction.triggered.connect(self.showPopularCallback)
-        
+        showPopularAction.triggered.connect(self.show_popular_callback)
+
         self.bar.addAction(showPopularAction)
         exitAction = QAction("Quit", parent)
         exitAction.setShortcut("Ctrl-X")
         exitAction.triggered.connect(self.parent.exit_app)
-    
+
         logoutAction = QAction("Logout", parent)
-        logoutAction.triggered.connect(self.logoutCallback)
+        logoutAction.triggered.connect(self.logout_callback)
         user.addAction(exitAction)
         user.addAction(logoutAction)
-    
-    def setMainView(self,view):
+
+    def set_main_view(self, view):
         self.mainView = view
-    
-    def showBar(self):
+
+    def show_bar(self):
         self.bar.setVisible(True)
-    
-    def hideBar(self):
+
+    def hide_bar(self):
         self.bar.setVisible(False)
-            
-    def showPopularCallback(self):
-        URLHandler.getMostPopularURLs()
-        self.mainView.refreshGroups()
-    
-    def addURLCallback(self):
+
+    def show_popular_callback(self):
+        URLHandler.get_most_popular_urls()
+        self.mainView.refresh_groups()
+
+    def add_url_callback(self):
         res, ok = QInputDialog.getText(self.parent, "Add URL", "Paste URL: ")
 
         if ok:
-            if URLHandler.stringIsURL(res):
-                URLHandler.addURL(res)
-                index = URLHandler.addURLToGroup(res, 'All')
-                self.mainView.group_view.addUrl(res,'All',index)
+            if URLHandler.string_is_url(res):
+                URLHandler.add_url(res)
+                index = URLHandler.add_url_to_group(res, 'All')
+                self.mainView.group_view.add_url(res, 'All', index)
             else:
                 print('it\'s not a url')
-    
-    def removeURLCallback(self):
+
+    def remove_url_callback(self):
         prompt = 'List of URLs'
         title = 'Choose URL to remove'
 
         db = DatabaseHandler()
-        entries = db.getEntry(CredentialsHandler.lastUsername)
+        entries = db.get_entry(CredentialsHandler.lastUsername)
         data = [url['actual_url'] for url in entries['urls']]
         ls = ListerView(prompt, title, data, self.parent)
-        ls.enableButtonBox()
+        ls.enable_button_box()
 
         if ls.exec_():
-            reslist = ls.getResults()
+            reslist = ls.get_results()
             for res in reslist:
-                URLHandler.removeURL(res)
-                self.mainView.group_view.removeUrl(res,"All")
+                URLHandler.remove_url(res)
+                self.mainView.group_view.remove_url(res, "All")
 
-    def addGroupCallback(self):
-        res, ok = QInputDialog.getText(self.parent, "Group URL", "Enter group name: ")
+    def add_group_callback(self):
+        res, ok = QInputDialog.getText(
+            self.parent, "Group URL", "Enter group name: ")
         if ok:
-            GroupHandler.addGroup(res)
-            self.mainView.group_view.addGroup(res,[],[])
-             
-            
-    def removeGroupCallback(self):
+            GroupHandler.add_group(res)
+            self.mainView.group_view.add_group(res, [], [])
+
+    def remove_group_callback(self):
         prompt = 'List of Groups'
         title = 'Choose group to remove'
 
         db = DatabaseHandler()
-        entries = db.getEntry(CredentialsHandler.lastUsername)
+        entries = db.get_entry(CredentialsHandler.lastUsername)
         data = [url for url in entries['groups']]
         ls = ListerView(prompt, title, data, self.parent)
-        ls.enableButtonBox()
+        ls.enable_button_box()
 
         if ls.exec_():
-            reslist = ls.getResults()
+            reslist = ls.get_results()
             for res in reslist:
-                GroupHandler.removeGroup(res)
-                self.mainView.group_view.removeGroup(res)
-                
-    def addURLToGroupCallback(self):
+                GroupHandler.remove_group(res)
+                self.mainView.group_view.remove_group(res)
+
+    def add_url_to_group_callback(self):
         w = QWidget()
         f = QHBoxLayout(w)
 
         db = DatabaseHandler()
-        entries = db.getEntry(CredentialsHandler.lastUsername)
+        entries = db.get_entry(CredentialsHandler.lastUsername)
 
         ldata = [url for url in entries['groups']]
         ls = ListerView('Groups', 'Groups', ldata, self.parent)
@@ -139,8 +141,8 @@ class MenuBar:
         rdata = [url['actual_url'] for url in entries['urls']]
         rs = ListerView('Urls', 'Urls', rdata, self.parent)
 
-        rs.layout().setContentsMargins(0,0,0,0)
-        ls.layout().setContentsMargins(0,0,0,0)
+        rs.layout().setContentsMargins(0, 0, 0, 0)
+        ls.layout().setContentsMargins(0, 0, 0, 0)
         f.addWidget(ls)
         f.addWidget(rs)
 
@@ -149,26 +151,27 @@ class MenuBar:
         mf = QVBoxLayout(q)
         mf.addWidget(w)
 
-        buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, Qt.Horizontal, self.parent)
+        buttonBox = QDialogButtonBox(
+            QDialogButtonBox.Ok | QDialogButtonBox.Cancel, Qt.Horizontal, self.parent)
         mf.addWidget(buttonBox)
         buttonBox.accepted.connect(q.accept)
         buttonBox.rejected.connect(q.reject)
 
         if q.exec_():
-            groups = ls.getResults()
-            urls = rs.getResults()
+            groups = ls.get_results()
+            urls = rs.get_results()
 
             for group in groups:
                 for url in urls:
-                    index = URLHandler.addURLToGroup(url, group)
-                    self.mainView.group_view.addUrl(url,group,index)
+                    index = URLHandler.add_url_to_group(url, group)
+                    self.mainView.group_view.add_url(url, group, index)
 
-    def removeURLFromGroupCallback(self):
+    def remove_url_from_group_callback(self):
         w = QWidget()
         f = QHBoxLayout(w)
 
         db = DatabaseHandler()
-        entries = db.getEntry(CredentialsHandler.lastUsername)
+        entries = db.get_entry(CredentialsHandler.lastUsername)
 
         ldata = [url for url in entries['groups']]
         ls = ListerView('Groups', 'Groups', ldata, self.parent)
@@ -176,8 +179,8 @@ class MenuBar:
         rdata = [url['actual_url'] for url in entries['urls']]
         rs = ListerView('Urls', 'Urls', rdata, self.parent)
 
-        rs.layout().setContentsMargins(0,0,0,0)
-        ls.layout().setContentsMargins(0,0,0,0)
+        rs.layout().setContentsMargins(0, 0, 0, 0)
+        ls.layout().setContentsMargins(0, 0, 0, 0)
         f.addWidget(ls)
         f.addWidget(rs)
 
@@ -186,19 +189,20 @@ class MenuBar:
         mf = QVBoxLayout(q)
         mf.addWidget(w)
 
-        buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, Qt.Horizontal, self.parent)
+        buttonBox = QDialogButtonBox(
+            QDialogButtonBox.Ok | QDialogButtonBox.Cancel, Qt.Horizontal, self.parent)
         mf.addWidget(buttonBox)
         buttonBox.accepted.connect(q.accept)
         buttonBox.rejected.connect(q.reject)
 
         if q.exec_():
-            groups = ls.getResults()
-            urls = rs.getResults()
+            groups = ls.get_results()
+            urls = rs.get_results()
 
             for group in groups:
                 for url in urls:
-                    URLHandler.removeURLFromGroup(url, group)
-                    self.mainView.group_view.removeUrl(url,group)
-                    
-    def logoutCallback(self):
-        self.parent.showLogin()
+                    URLHandler.remove_url_from_group(url, group)
+                    self.mainView.group_view.remove_url(url, group)
+
+    def logout_callback(self):
+        self.parent.show_login()

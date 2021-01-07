@@ -1,54 +1,54 @@
 from libs.grouphandler import GroupHandler
-import re
 from libs.databasehandler import DatabaseHandler
 from libs.credhandler import CredentialsHandler
+import re
 
 class URLHandler:
-    popular_name ="Most Popular URLs"
+    popular_name = "Most Popular URLs"
 
     @staticmethod
-    def addURL(url):
+    def add_url(url):
         dbh = DatabaseHandler()
 
         username = CredentialsHandler.lastUsername
-        res = dbh.getEntry(username)
+        res = dbh.get_entry(username)
 
         for entry in res['urls']:
             if entry['actual_url'] == url:
                 return
 
         new_entry = {
-                'actual_url': url,
-                'rss_title': None,
-                'rss_link': None,
-                'rss_desc': None,
-                'articles': [],
-                }
+            'actual_url': url,
+            'rss_title': None,
+            'rss_link': None,
+            'rss_desc': None,
+            'articles': [],
+        }
 
         res['urls'].append(new_entry)
-        dbh.addEntry(username, res)
-        stats = dbh.getEntry("__all_urls_statistics__")
+        dbh.add_entry(username, res)
+        stats = dbh.get_entry("__all_urls_statistics__")
         if stats == None:
             stats = []
-            stats.append([url,1])
-            dbh.addEntry("__all_urls_statistics__",stats)
+            stats.append([url, 1])
+            dbh.add_entry("__all_urls_statistics__", stats)
             return
-        url_exists=False
-        for i,stat in enumerate(stats):
+        url_exists = False
+        for i, stat in enumerate(stats):
             if url in stat:
-                url_exists=True
-                stats[i][1]+=1
+                url_exists = True
+                stats[i][1] += 1
                 break
         if not url_exists:
-            stats.append([url,1])
-        dbh.addEntry("__all_urls_statistics__",stats)
+            stats.append([url, 1])
+        dbh.add_entry("__all_urls_statistics__", stats)
 
     @staticmethod
-    def addURLToGroup(url, group):
+    def add_url_to_group(url, group):
         dbh = DatabaseHandler()
 
         username = CredentialsHandler.lastUsername
-        res = dbh.getEntry(username)
+        res = dbh.get_entry(username)
 
         for i, entry in enumerate(res['urls']):
             if entry['actual_url'] == url:
@@ -56,17 +56,17 @@ class URLHandler:
                     if i not in res['groups'][group]:
                         res['groups'][group].append(i)
                 else:
-                    res['groups'][group] = [i] 
+                    res['groups'][group] = [i]
 
-                dbh.addEntry(username, res)
+                dbh.add_entry(username, res)
                 return i
 
     @staticmethod
-    def removeURL(url):
+    def remove_url(url):
         dbh = DatabaseHandler()
 
         username = CredentialsHandler.lastUsername
-        res = dbh.getEntry(username)
+        res = dbh.get_entry(username)
 
         for i, entry in enumerate(res['urls']):
             if entry['actual_url'] == url:
@@ -75,45 +75,46 @@ class URLHandler:
                 for j, group in enumerate(res['groups']):
                     if i in res['groups'][group]:
                         hl = res['groups'][group][:i]
-                        hr = list(map(lambda x: x - 1, res['groups'][group][i + 1:]))
+                        hr = list(
+                            map(lambda x: x - 1, res['groups'][group][i + 1:]))
                         res['groups'][group] = hl + hr
 
-                dbh.addEntry(username, res)
-                stats = dbh.getEntry("__all_urls_statistics__")
+                dbh.add_entry(username, res)
+                stats = dbh.get_entry("__all_urls_statistics__")
                 if stats == None:
                     return
-                url_exists=False
-                for i,stat in enumerate(stats):
+                url_exists = False
+                for i, stat in enumerate(stats):
                     if url in stat:
-                        url_exists=True
-                        stats[i][1]-=1
+                        url_exists = True
+                        stats[i][1] -= 1
                         break
                 if url_exists and stats[i][1] == 0:
                     stats.pop(i)
-                dbh.addEntry("__all_urls_statistics__",stats)
+                dbh.add_entry("__all_urls_statistics__", stats)
                 return
 
     @staticmethod
-    def removeURLFromGroup(url, group):
+    def remove_url_from_group(url, group):
         dbh = DatabaseHandler()
 
         username = CredentialsHandler.lastUsername
-        res = dbh.getEntry(username)
+        res = dbh.get_entry(username)
 
         for i, entry in enumerate(res['urls']):
             if entry['actual_url'] == url:
                 if group in res['groups'] and i < len(res['groups'][group]):
                     res['groups'][group].remove(i)
-                    dbh.addEntry(username, res)
+                    dbh.add_entry(username, res)
 
                 return
 
     @staticmethod
-    def appendDownloadedArticles(url, articles):
+    def append_downloaded_articles(url, articles):
         dbh = DatabaseHandler()
 
         username = CredentialsHandler.lastUsername
-        res = dbh.getEntry(username)
+        res = dbh.get_entry(username)
 
         for i, entry in enumerate(res['urls']):
             if entry['actual_url'] == url:
@@ -123,27 +124,27 @@ class URLHandler:
                         if eart['title'] == nart.title:
                             addThisUrl = False
                             break
-                    
+
                     if addThisUrl:
                         nentry = {
-                                "title": nart.title,
-                                "link": nart.link,
-                                "desc": nart.content,
-                                "pub_date": nart.pubDate,
-                                "pub_date_parsed": nart.pubDateParsed,
-                                "seen": False,
-                                }
+                            "title": nart.title,
+                            "link": nart.link,
+                            "desc": nart.content,
+                            "pub_date": nart.pubDate,
+                            "pub_date_parsed": nart.pub_date_parsed,
+                            "seen": False,
+                        }
 
                         entry['articles'].append(nentry)
 
-        dbh.addEntry(username, res)
+        dbh.add_entry(username, res)
 
     @staticmethod
-    def setArticleSeen(url, seen):
+    def set_article_seen(url, seen):
         dbh = DatabaseHandler()
 
         username = CredentialsHandler.lastUsername
-        res = dbh.getEntry(username)
+        res = dbh.get_entry(username)
 
         for i, entry in enumerate(res['urls']):
             for j, article in enumerate(entry['articles']):
@@ -151,41 +152,42 @@ class URLHandler:
                     res['urls'][i]['articles'][j]['seen'] = seen
                     break
 
-        dbh.addEntry(username, res)
+        dbh.add_entry(username, res)
 
     @staticmethod
-    def getMostPopularURLs():
+    def get_most_popular_urls():
         dbh = DatabaseHandler()
         groups = GroupHandler()
-        user= dbh.getEntry(CredentialsHandler.lastUsername)
+        user = dbh.get_entry(CredentialsHandler.lastUsername)
         if URLHandler.popular_name in user["groups"]:
-            groups.removeGroup(URLHandler.popular_name)
-        groups.addGroup(URLHandler.popular_name)
-        mostpopular = dbh.filterList()
-        add_to_user_urls=True
+            groups.remove_group(URLHandler.popular_name)
+        groups.add_group(URLHandler.popular_name)
+        mostpopular = dbh.filter_list()
+        add_to_user_urls = True
         indexes = []
         for stat in mostpopular:
             url = stat[0]
             idx = 0
             for user_url in user["urls"]:
                 if user_url["actual_url"] == url:
-                    add_to_user_urls=False
-                    idx +=1
+                    add_to_user_urls = False
+                    idx += 1
             if add_to_user_urls:
-                idx = URLHandler.addURL(url)                
+                idx = URLHandler.add_url(url)
             indexes.append(idx)
-            URLHandler.addURLToGroup(url,URLHandler.popular_name)
-        return mostpopular,indexes
+            URLHandler.add_url_to_group(url, URLHandler.popular_name)
+        return mostpopular, indexes
 
     @staticmethod
-    def stringIsURL(url):
+    def string_is_url(url):
         regex = re.compile(
-                r'^(?:http|ftp)s?://' # http:// or https://
-                r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' #domain...
-                r'localhost|' #localhost...
-                r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # ...or ip
-                r'(?::\d+)?' # optional port
-                r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+            r'^(?:http|ftp)s?://'  # http:// or https://
+            # domain...
+            r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'
+            r'localhost|'  # localhost...
+            r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'  # ...or ip
+            r'(?::\d+)?'  # optional port
+            r'(?:/?|[/?]\S+)$', re.IGNORECASE)
 
         res = re.match(regex, url) is not None
 

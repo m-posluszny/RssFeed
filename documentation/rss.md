@@ -11,11 +11,11 @@
     * Na komputerze w Start wpisać cmd, zostanie otwarty terminal w którym trzeba wpisać poniższe polecenie.
 
     ```
-    pip install -r requairements.txt
+    pip install -r requirements.txt
     ```
     * W celu otwarcia aplikacji należy wpisać poniższe polecenie w teminalu:
     ```
-    py main.py
+    py rssfeed.py
     ```
 
 ## Metody Działania
@@ -35,15 +35,15 @@
 ## Główny widok
 * Po zalogowaniu zostaje wyświetlone okno z poniższymi opcjami: 
      
-    * Dodawanie URL(addURL)
+    * Dodawanie URL(add_url)
         * Po wejściu w to okienko zostaje wyświetlone okno dodania URL w którym wklejamy adres i  klikając OK zatwierdzamy lub wychodzimy klikając przycisk cacel 
         * Użytkownik podaje Url którego chce dodać jeśli podany adres jest błędny zostaje wyświetlony komunikat it\'s not a url
       
-    * Ususwanie URL(removeURL)
+    * Ususwanie URL(remove_url)
         * Zostaje otwarte okno usuwania URL w którym użytkownuk ma możliwość kliknięciem wybrać URL 
         * Użytkowanik wybiera URL którego chce usunąc i go usuwa
       
-    * Dodawanie gruo(AddGroup)          
+    * Dodawanie gruo(add_group)          
         * Zostaje otwarte okno dodania grupy
         * Użytkownik podaje nazwe grupy której chce dodać 
         * Zostaje ona wyświetlona w oknach grup w pierwszej kolumnie w oknie głównym

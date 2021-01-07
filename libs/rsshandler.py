@@ -11,7 +11,7 @@ class RSSHandler:
         self.__rssHeader = RSSHeader()
         self.__articles = []
 
-    def fetchFromURL(self, url):
+    def fetch_from_url(self, url):
         import requests
 
         self.__URL = url
@@ -24,7 +24,7 @@ class RSSHandler:
             self.__responseCode = 400
             print("cannot fetch", url)
 
-    def parseXML(self):
+    def parse_xml(self):
         parsed = feedparser.parse(self.__websiteContent)
 
         rssFeed = parsed["feed"]
@@ -44,15 +44,13 @@ class RSSHandler:
             assert "published_parsed" in item
 
             self.__articles.append(
-                Article(item["title"], item["link"], item["summary"], item["published"], item["published_parsed"])
+                Article(item["title"], item["link"], item["summary"],
+                        item["published"], item["published_parsed"])
             )
 
-    def returnArticles(self):
+    def return_articles(self):
         return self.__articles
 
-    def returnRSSHeader(self):
-        return ()
-
-    def fetchIsSuccess(self):
+    def fetch_is_success(self):
         success = self.__responseCode >= 200 and self.__responseCode <= 299
         return success
