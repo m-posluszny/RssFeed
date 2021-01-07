@@ -1,7 +1,7 @@
 from PySide2.QtGui import QStandardItem, QStandardItemModel, QColor
 from PySide2.QtWidgets import QListView
+from PySide2.QtCore import QItemSelectionModel
 import time
-
 
 class FeedView(QListView):
     def __init__(self, parent=None):
@@ -17,22 +17,21 @@ class FeedView(QListView):
 
     def appendMessage(self,site,title,desc,date,link,seen):
         today = time.gmtime()
-
+        
         if (date.tm_year == today.tm_year) and (date.tm_yday == today.tm_yday):
             row_date = "{:02d}:{:02d}".format(date.tm_hour, date.tm_min)
         else:
-            row_date = "{} {}, {}".format(
-                date.tm_mday, date.tm_mon, date.tm_year)
+            row_date = "{} {}, {}".format(date.tm_mday, date.tm_mon, date.tm_year)
         text = f"{title}   {site}\n{row_date}"
         new_item = QStandardItem(text)
         new_item.setCheckable(False)
         new_item.setEditable(False)
         new_item.setSelectable(True)
-        new_item.article_bundle = {
-            "site": site,
-            "link": link,
-            "title": title,
-            "article": desc
+        new_item.article_bundle={
+            "site":site,
+            "link":link,
+            "title":title,
+            "article":desc
         }
         self._og_bg = new_item.background();
         self.setSeen(new_item,seen)
@@ -43,3 +42,4 @@ class FeedView(QListView):
             item.setBackground(QColor(112, 112, 112))
         else:
             item.setBackground(self._og_bg)
+        

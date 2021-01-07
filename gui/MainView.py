@@ -5,6 +5,7 @@ from PySide2.QtCore import QItemSelectionModel
 from libs.urlhandler import URLHandler
 from libs.credhandler import CredentialsHandler
 from libs.databasehandler import DatabaseHandler
+import dateutil.parser as DP
 from PySide2.QtWidgets import (
     QSplitter,
     QHBoxLayout,
@@ -12,9 +13,8 @@ from PySide2.QtWidgets import (
     
 )
 
-
 class MainView(QWidget):
-
+    
     def __init__(self):
         super().__init__()
         self.selected_group = None
@@ -81,10 +81,9 @@ class MainView(QWidget):
         if (self.selected_group != item.text(0) or update):
             self.feed_view.clearList()
             self.selected_group = item.text(0)
-            art_list = []
+            art_list=[]
             if item.rss_type == "group":
                 for url_name in self.group_view.urls:
-                    print(url_name)
                     if item.text(0) in url_name:
                         sub_item = self.group_view.urls[url_name]
                         url = self.entry['urls'][sub_item.url_index]
@@ -98,15 +97,15 @@ class MainView(QWidget):
     
     def getGuiArticles(self,url):
         site = url["rss_title"]
-        art_list = []
+        art_list=[]
         for article in url["articles"]:
-            article_bundle = {
-                "date": article["pub_date_parsed"],
-                "title": article["title"],
-                "desc": article["desc"],
-                "seen": article["seen"],
-                "link": article["link"],
-                "site": site,
+            article_bundle={
+                "date" : article["pub_date_parsed"],
+                "title" : article["title"],
+                "desc" : article["desc"],
+                "seen" : article["seen"],
+                "link" : article["link"],
+                "site" : site,
             }
             art_list.append(article_bundle)
         return art_list

@@ -6,40 +6,46 @@ from libs.urlhandler import URLHandler
 from libs.grouphandler import GroupHandler
 from libs.credhandler import CredentialsHandler
 from libs.databasehandler import DatabaseHandler
-from pyside_material import apply_stylesheet
+from pyside_material import apply_stylesheet, list_themes
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import (
     QMainWindow,
     QDesktopWidget,
     QAction,
+    QMenu,
     QInputDialog,
     QMainWindow,
     QAction,
     QDialog,
     QInputDialog,
+    QFormLayout,
+    QLabel,
+    QListView,
+    QApplication,
     QDialogButtonBox,
+    QPushButton,
+    QSplitter,
     QHBoxLayout,
     QVBoxLayout,
     QWidget,
 )
 
-
 class MainWindow(QMainWindow):
 
-    def __init__(self, app):
+    def __init__(self,app):
         super(MainWindow, self).__init__()
         self.__app = app
         apply_stylesheet(app, theme='dark_amber.xml')
         self.setWindowTitle("RSS Feed")
         self.setGeometry(300, 300, 850, 500)
-        self.setMinimumSize(850, 500)
+        self.setMinimumSize(850,500)
         self.center()
         self.__toolBar = MenuBar(self.menuBar(),self)
 
         debugNoLogin = False
         if debugNoLogin:
-            credHandler = CredentialsHandler('admin', 'admin')
+            credHandler = CredentialsHandler('admin','admin')
             credHandler.encryptCredentials()
             if credHandler.areCredValid():
                 self.showFeedView()

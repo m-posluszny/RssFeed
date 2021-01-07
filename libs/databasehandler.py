@@ -1,14 +1,14 @@
 import lmdb
-import os
+import os 
 import shutil
 import pickle
-
 
 class DatabaseHandler:
     actualDatabase = None
     actualDatabasePath = ''
     dbIsTemp = False
 
+    # TODO(mateusz): Read about cross platform home directory and use it to create
     # the database
     @staticmethod
     def __createDatabase(path):
@@ -26,7 +26,7 @@ class DatabaseHandler:
         DatabaseHandler.actualDatabasePath = ''
         DatabaseHandler.dbIsTemp = False
 
-    def __init__(self, db_path='./tmp/', dbIsTemp=False):
+    def __init__(self, db_path = './tmp/', dbIsTemp = False):
         if DatabaseHandler.actualDatabase == None:
             DatabaseHandler.dbIsTemp = dbIsTemp
             DatabaseHandler.__createDatabase(db_path)

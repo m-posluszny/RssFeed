@@ -44,8 +44,7 @@ class RSSHandler:
             assert "published_parsed" in item
 
             self.__articles.append(
-                Article(item["title"], item["link"], item["summary"],
-                        item["published"], item["published_parsed"])
+                Article(item["title"], item["link"], item["summary"], item["published"], item["published_parsed"])
             )
 
     def returnArticles(self):

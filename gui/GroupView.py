@@ -6,10 +6,9 @@ from libs.urlhandler import URLHandler
 from libs.databasehandler import DatabaseHandler
 from libs.credhandler import CredentialsHandler
 
-
 class GroupView(QTreeWidget):
-
-    def __init__(self, parent=None):
+    
+    def __init__(self,parent=None):
         super().__init__(parent=parent)
         self.root = self.invisibleRootItem()
         self.setColumnCount(1)
@@ -67,15 +66,17 @@ class GroupView(QTreeWidget):
         assert(item.columnCount() >= 1)
 
         menu = QMenu()
-        menu.addAction(
-            QAction('Refresh', self, triggered=lambda: self.menuRefreshCallback(item)))
+        menu.addAction(QAction('Refresh', self, triggered=lambda: self.menuRefreshCallback(item)))
         menu.exec_(QCursor.pos())
 
     def menuRefreshCallback(self, clicked_item):
         rssh = RSSHandler()
         if clicked_item.rss_type == 'url':
             url = clicked_item.text(0)
-            self.refresh_url_data(url)
+            rssh = RSSHandler()
+            rssh.fetchFromURL(url)
+            if rssh.fetchIsSuccess():
+                rssh.parseXML()
 
             art = rssh.returnArticles()
             URLHandler.appendDownloadedArticles(url, art)
