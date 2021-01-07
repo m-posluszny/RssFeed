@@ -1,6 +1,7 @@
 from libs.databasehandler import DatabaseHandler
 from libs.credhandler import CredentialsHandler
 
+
 class GroupHandler:
     @staticmethod
     def addGroup(group):

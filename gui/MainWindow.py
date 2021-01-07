@@ -5,46 +5,40 @@ from libs.urlhandler import URLHandler
 from libs.grouphandler import GroupHandler
 from libs.credhandler import CredentialsHandler
 from libs.databasehandler import DatabaseHandler
-from pyside_material import apply_stylesheet, list_themes
+from pyside_material import apply_stylesheet
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (
     QMainWindow,
     QDesktopWidget,
     QAction,
-    QMenu,
     QInputDialog,
     QMainWindow,
     QAction,
     QDialog,
     QInputDialog,
-    QFormLayout,
-    QLabel,
-    QListView,
-    QApplication,
     QDialogButtonBox,
-    QPushButton,
-    QSplitter,
     QHBoxLayout,
     QVBoxLayout,
     QWidget,
 )
 
+
 class MainWindow(QMainWindow):
 
-    def __init__(self,app):
+    def __init__(self, app):
         super(MainWindow, self).__init__()
         self.__app = app
         apply_stylesheet(app, theme='dark_amber.xml')
         self.setWindowTitle("RSS Feed")
         self.setGeometry(300, 300, 850, 500)
-        self.setMinimumSize(850,500)
+        self.setMinimumSize(850, 500)
         self.center()
         self.__toolBar = self.menuBar()
         self.loadMenubar()
 
         debugNoLogin = True
         if debugNoLogin:
-            credHandler = CredentialsHandler('admin','admin')
+            credHandler = CredentialsHandler('admin', 'admin')
             credHandler.encryptCredentials()
             if credHandler.areCredValid():
                 self.showFeedView()
@@ -75,7 +69,7 @@ class MainWindow(QMainWindow):
         self.__toolBar.setVisible(True)
         self.mainView = MainView()
         self.setCentralWidget(self.mainView)
-        
+
     def loadMenubar(self):
         bar = self.__toolBar
         bar.setVisible(True)
@@ -88,16 +82,16 @@ class MainWindow(QMainWindow):
         removeURLAction.triggered.connect(self.removeURLCallback)
         bar.addAction(addURLAction)
         bar.addAction(removeURLAction)
-    
+
         addGroupAction = QAction("Add Group", self)
         addGroupAction.triggered.connect(self.addGroupCallback)
 
         removeGroupAction = QAction("Remove Group", self)
         removeGroupAction.triggered.connect(self.removeGroupCallback)
-        
+
         bar.addAction(addGroupAction)
         bar.addAction(removeGroupAction)
-        
+
         addUrlGroupAction = QAction("Add URL to Group", self)
         addUrlGroupAction.triggered.connect(self.addURLToGroupCallback)
 
@@ -106,22 +100,14 @@ class MainWindow(QMainWindow):
 
         bar.addAction(addUrlGroupAction)
         bar.addAction(removeUrlGroupAction)
-        #themeMenu = QMenu("Theme",self)
         exitAction = QAction("Quit", self)
         exitAction.setShortcut("Ctrl-X")
         exitAction.triggered.connect(self.exit_app)
-        # for theme in list_themes():
-        #     themeAction = QAction(theme,self)
-        #     themeAction.triggered.connect(lambda: self.switch_theme(theme))
-        #     themeMenu.addAction(themeAction)
         logoutAction = QAction("Logout", self)
         logoutAction.triggered.connect(self.logoutCallback)
-        #user.addMenu(themeMenu)
         user.addAction(exitAction)
         user.addAction(logoutAction)
 
-   
-    # TODO Move all menubar things to class MenuBar in gui
     def addURLCallback(self):
         res, ok = QInputDialog.getText(self, "Add URL", "Paste URL: ")
 
@@ -130,13 +116,10 @@ class MainWindow(QMainWindow):
             if urlh.stringIsURL(res):
                 URLHandler.addURL(res)
                 index = URLHandler.addURLToGroup(res, 'All')
-                self.mainView.group_view.add_url(res,'All',index)
+                self.mainView.group_view.add_url(res, 'All', index)
             else:
                 print('it\'s not a url')
 
-    def switch_theme(self,theme):
-        apply_stylesheet(self.__app,theme)
-    
     def removeURLCallback(self):
         prompt = 'List of URLs'
         title = 'Choose URL to remove'
@@ -151,15 +134,14 @@ class MainWindow(QMainWindow):
             reslist = ls.getResults()
             for res in reslist:
                 URLHandler.removeURL(res)
-                self.mainView.group_view.remove_url(res,"All")
+                self.mainView.group_view.remove_url(res, "All")
 
     def addGroupCallback(self):
         res, ok = QInputDialog.getText(self, "Group URL", "Enter group name: ")
         if ok:
             GroupHandler.addGroup(res)
-            self.mainView.group_view.add_group(res,[],[])
-             
-            
+            self.mainView.group_view.add_group(res, [], [])
+
     def removeGroupCallback(self):
         prompt = 'List of Groups'
         title = 'Choose group to remove'
@@ -175,7 +157,7 @@ class MainWindow(QMainWindow):
             for res in reslist:
                 GroupHandler.removeGroup(res)
                 self.mainView.group_view.remove_group(res)
-                
+
     def addURLToGroupCallback(self):
         w = QWidget()
         f = QHBoxLayout(w)
@@ -189,8 +171,8 @@ class MainWindow(QMainWindow):
         rdata = [url['actual_url'] for url in entries['urls']]
         rs = ListerView('Urls', 'Urls', rdata, self)
 
-        rs.layout().setContentsMargins(0,0,0,0)
-        ls.layout().setContentsMargins(0,0,0,0)
+        rs.layout().setContentsMargins(0, 0, 0, 0)
+        ls.layout().setContentsMargins(0, 0, 0, 0)
         f.addWidget(ls)
         f.addWidget(rs)
 
@@ -199,7 +181,8 @@ class MainWindow(QMainWindow):
         mf = QVBoxLayout(q)
         mf.addWidget(w)
 
-        buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, Qt.Horizontal, self)
+        buttonBox = QDialogButtonBox(
+            QDialogButtonBox.Ok | QDialogButtonBox.Cancel, Qt.Horizontal, self)
         mf.addWidget(buttonBox)
         buttonBox.accepted.connect(q.accept)
         buttonBox.rejected.connect(q.reject)
@@ -211,7 +194,7 @@ class MainWindow(QMainWindow):
             for group in groups:
                 for url in urls:
                     index = URLHandler.addURLToGroup(url, group)
-                    self.mainView.group_view.add_url(url,group,index)
+                    self.mainView.group_view.add_url(url, group, index)
 
     def removeURLFromGroupCallback(self):
         w = QWidget()
@@ -226,8 +209,8 @@ class MainWindow(QMainWindow):
         rdata = [url['actual_url'] for url in entries['urls']]
         rs = ListerView('Urls', 'Urls', rdata, self)
 
-        rs.layout().setContentsMargins(0,0,0,0)
-        ls.layout().setContentsMargins(0,0,0,0)
+        rs.layout().setContentsMargins(0, 0, 0, 0)
+        ls.layout().setContentsMargins(0, 0, 0, 0)
         f.addWidget(ls)
         f.addWidget(rs)
 
@@ -236,7 +219,8 @@ class MainWindow(QMainWindow):
         mf = QVBoxLayout(q)
         mf.addWidget(w)
 
-        buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, Qt.Horizontal, self)
+        buttonBox = QDialogButtonBox(
+            QDialogButtonBox.Ok | QDialogButtonBox.Cancel, Qt.Horizontal, self)
         mf.addWidget(buttonBox)
         buttonBox.accepted.connect(q.accept)
         buttonBox.rejected.connect(q.reject)
@@ -248,8 +232,8 @@ class MainWindow(QMainWindow):
             for group in groups:
                 for url in urls:
                     URLHandler.removeURLFromGroup(url, group)
-                    self.mainView.group_view.remove_url(url,group)
-            
+                    self.mainView.group_view.remove_url(url, group)
+
     def logoutCallback(self):
         self.showLogin()
 

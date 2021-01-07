@@ -1,6 +1,6 @@
 from PySide2.QtCore import Qt
-from PySide2.QtWidgets import QMainWindow, QAction, QDialog, QInputDialog, QFormLayout, QLabel, QListView, QApplication, QDialogButtonBox, QPushButton
-from PySide2.QtGui import QStandardItemModel, QStandardItem, QMouseEvent
+from PySide2.QtWidgets import QDialog, QFormLayout, QLabel, QListView, QDialogButtonBox
+from PySide2.QtGui import QStandardItemModel, QStandardItem
 
 
 class ListerView(QDialog):
@@ -33,7 +33,8 @@ class ListerView(QDialog):
 
     def enableButtonBox(self):
         form = self.layout()
-        buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, Qt.Horizontal, self)
+        buttonBox = QDialogButtonBox(
+            QDialogButtonBox.Ok | QDialogButtonBox.Cancel, Qt.Horizontal, self)
         form.addRow(buttonBox)
         buttonBox.accepted.connect(self.accept)
         buttonBox.rejected.connect(self.reject)

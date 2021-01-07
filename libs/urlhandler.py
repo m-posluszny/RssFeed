@@ -2,6 +2,7 @@ import re
 from libs.databasehandler import DatabaseHandler
 from libs.credhandler import CredentialsHandler
 
+
 class URLHandler:
     def addURL(url):
         dbh = DatabaseHandler()
@@ -14,12 +15,12 @@ class URLHandler:
                 return
 
         new_entry = {
-                'actual_url': url,
-                'rss_title': None,
-                'rss_link': None,
-                'rss_desc': None,
-                'articles': [],
-                }
+            'actual_url': url,
+            'rss_title': None,
+            'rss_link': None,
+            'rss_desc': None,
+            'articles': [],
+        }
 
         res['urls'].append(new_entry)
         dbh.addEntry(username, res)
@@ -36,7 +37,7 @@ class URLHandler:
                     if i not in res['groups'][group]:
                         res['groups'][group].append(i)
                 else:
-                    res['groups'][group] = [i] 
+                    res['groups'][group] = [i]
 
                 dbh.addEntry(username, res)
                 return i
@@ -54,7 +55,8 @@ class URLHandler:
                 for j, group in enumerate(res['groups']):
                     if i in res['groups'][group]:
                         hl = res['groups'][group][:i]
-                        hr = list(map(lambda x: x - 1, res['groups'][group][i + 1:]))
+                        hr = list(
+                            map(lambda x: x - 1, res['groups'][group][i + 1:]))
                         res['groups'][group] = hl + hr
 
                 dbh.addEntry(username, res)
@@ -89,16 +91,16 @@ class URLHandler:
                         if eart['title'] == nart.title:
                             addThisUrl = False
                             break
-                    
+
                     if addThisUrl:
                         nentry = {
-                                "title": nart.title,
-                                "link": nart.link,
-                                "desc": nart.content,
-                                "pub_date": nart.pubDate,
-                                "pub_date_parsed": nart.pubDateParsed,
-                                "seen": False,
-                                }
+                            "title": nart.title,
+                            "link": nart.link,
+                            "desc": nart.content,
+                            "pub_date": nart.pubDate,
+                            "pub_date_parsed": nart.pubDateParsed,
+                            "seen": False,
+                        }
 
                         entry['articles'].append(nentry)
 
@@ -123,12 +125,13 @@ class URLHandler:
 
     def stringIsURL(self, url):
         regex = re.compile(
-                r'^(?:http|ftp)s?://' # http:// or https://
-                r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' #domain...
-                r'localhost|' #localhost...
-                r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # ...or ip
-                r'(?::\d+)?' # optional port
-                r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+            r'^(?:http|ftp)s?://'  # http:// or https://
+            # domain...
+            r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'
+            r'localhost|'  # localhost...
+            r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'  # ...or ip
+            r'(?::\d+)?'  # optional port
+            r'(?:/?|[/?]\S+)$', re.IGNORECASE)
 
         res = re.match(regex, url) is not None
 
