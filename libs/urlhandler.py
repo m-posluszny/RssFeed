@@ -6,7 +6,8 @@ from libs.credhandler import CredentialsHandler
 
 class URLHandler:
     popular_name ="Most Popular URLs"
-    
+
+    @staticmethod
     def addURL(url):
         dbh = DatabaseHandler()
 
@@ -43,6 +44,7 @@ class URLHandler:
             stats.append([url,1])
         dbh.addEntry("__all_urls_statistics__",stats)
 
+    @staticmethod
     def addURLToGroup(url, group):
         dbh = DatabaseHandler()
 
@@ -60,6 +62,7 @@ class URLHandler:
                 dbh.addEntry(username, res)
                 return i
 
+    @staticmethod
     def removeURL(url):
         dbh = DatabaseHandler()
 
@@ -92,6 +95,7 @@ class URLHandler:
                 dbh.addEntry("__all_urls_statistics__",stats)
                 return
 
+    @staticmethod
     def removeURLFromGroup(url, group):
         dbh = DatabaseHandler()
 
@@ -106,6 +110,7 @@ class URLHandler:
 
                 return
 
+    @staticmethod
     def appendDownloadedArticles(url, articles):
         dbh = DatabaseHandler()
 
@@ -135,6 +140,7 @@ class URLHandler:
 
         dbh.addEntry(username, res)
 
+    @staticmethod
     def setArticleSeen(url, seen):
         dbh = DatabaseHandler()
 
@@ -149,6 +155,7 @@ class URLHandler:
 
         dbh.addEntry(username, res)
 
+    @staticmethod
     def getMostPopularURLs():
         dbh = DatabaseHandler()
         groups = GroupHandler()
@@ -171,8 +178,9 @@ class URLHandler:
             indexes.append(idx)
             URLHandler.addURLToGroup(url,URLHandler.popular_name)
         return mostpopular,indexes
-        
-    def stringIsURL(self, url):
+
+    @staticmethod
+    def stringIsURL(url):
         regex = re.compile(
             r'^(?:http|ftp)s?://'  # http:// or https://
             # domain...

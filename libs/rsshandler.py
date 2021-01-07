@@ -24,9 +24,6 @@ class RSSHandler:
             self.__responseCode = 400
             print("cannot fetch", url)
 
-    def formData(self):
-        pass
-
     def parseXML(self):
         parsed = feedparser.parse(self.__websiteContent)
 
@@ -57,8 +54,6 @@ class RSSHandler:
     def returnRSSHeader(self):
         return ()
 
-    # This is for debugging purposes?
-    # I have it in vpp, but did not include that in sequence diagram
     def fetchIsSuccess(self):
         success = self.__responseCode >= 200 and self.__responseCode <= 299
         return success

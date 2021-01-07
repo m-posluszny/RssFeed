@@ -80,8 +80,7 @@ class MenuBar:
         res, ok = QInputDialog.getText(self.parent, "Add URL", "Paste URL: ")
 
         if ok:
-            urlh = URLHandler()
-            if urlh.stringIsURL(res):
+            if URLHandler.stringIsURL(res):
                 URLHandler.addURL(res)
                 index = URLHandler.addURLToGroup(res, 'All')
                 self.mainView.group_view.addUrl(res,'All',index)

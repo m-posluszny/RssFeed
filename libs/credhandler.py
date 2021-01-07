@@ -2,7 +2,6 @@ from hashlib import sha1
 from libs.databasehandler import DatabaseHandler
 import time
 
-
 class CredentialsHandler:
     lastUsername = ''
 
