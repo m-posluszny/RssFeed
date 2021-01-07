@@ -56,10 +56,10 @@ class FormView(QWidget):
         self._parent.show_feed_view()
 
     def on_confirm_press(self, event):
-        ...
+        pass
 
     def on_link_press(self, event):
-        ...
+        pass
 
     def display_error_message(self):
         self._error_message.setVisible(True)

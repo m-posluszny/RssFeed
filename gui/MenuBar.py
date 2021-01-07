@@ -4,17 +4,8 @@ from libs.grouphandler import GroupHandler
 from libs.credhandler import CredentialsHandler
 from libs.databasehandler import DatabaseHandler
 from PySide2.QtCore import Qt
-from PySide2.QtWidgets import (
-    QAction,
-    QInputDialog,
-    QAction,
-    QDialog,
-    QInputDialog,
-    QDialogButtonBox,
-    QHBoxLayout,
-    QVBoxLayout,
-    QWidget,
-)
+from PySide2.QtWidgets import QAction, QInputDialog, QAction, QDialog,  QInputDialog,  QDialogButtonBox, QHBoxLayout, QVBoxLayout, QWidget
+
 
 
 class MenuBar:

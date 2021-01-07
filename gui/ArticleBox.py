@@ -45,7 +45,7 @@ class ArticleBox(QFrame):
         self.setLayout(self.__layout)
 
     def load_started_callback(self):
-        ...
+        pass
 
     def load_finished_callback(self):
         self.__content_box.setVisible(True)

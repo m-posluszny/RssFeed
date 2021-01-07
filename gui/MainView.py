@@ -5,13 +5,7 @@ from PySide2.QtCore import QItemSelectionModel
 from libs.urlhandler import URLHandler
 from libs.credhandler import CredentialsHandler
 from libs.databasehandler import DatabaseHandler
-import dateutil.parser as DP
-from PySide2.QtWidgets import (
-    QSplitter,
-    QHBoxLayout,
-    QWidget,
-
-)
+from PySide2.QtWidgets import QSplitter, QHBoxLayout, QWidget
 
 
 class MainView(QWidget):

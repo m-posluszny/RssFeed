@@ -9,8 +9,6 @@ class DatabaseHandler:
     actualDatabasePath = ''
     dbIsTemp = False
 
-    # TODO(mateusz): Read about cross platform home directory and use it to create
-    # the database
     @staticmethod
     def __create_database(path):
         if not os.path.exists(path):
