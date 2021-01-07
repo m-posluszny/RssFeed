@@ -17,26 +17,26 @@ class GroupView(QTreeWidget):
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.showContextMenu)
         self.addTopLevelItem(self.root)
-        self.groups = {}
-        self.urls = {}
-        self.add_group("All", [], [])
-
-    def add_group(self, group_name, urls, indexes):
-        group_tree = QTreeWidgetItem([group_name])
+        self.groups={}
+        self.urls={}
+        
+    def addGroup(self,group_name,urls,indexes):
+        group_tree =  QTreeWidgetItem([group_name])
         group_tree.rss_type = "group"
-        self.groups[group_name] = group_tree
-        for url, idx in zip(urls, indexes):
-            self.add_url(url, group_name, idx)
+        self.groups[group_name]=group_tree
+        for url,idx in zip(urls,indexes):
+           self.addUrl(url,group_name,idx)
         self.addTopLevelItem(group_tree)
-
-    def add_url(self, url, group_name, index):
+    
+    def addUrl(self,url,group_name,index):
         url_row = QTreeWidgetItem([url])
         url_row.rss_type = "url"
         url_row.url_index = index
         self.urls[f"{group_name}_{url}"] = url_row
         self.groups[group_name].addChild(url_row)
-
-    def remove_group(self, group_name):
+        
+    
+    def removeGroup(self,group_name):
         item = self.groups[group_name]
         self.root.removeChild(item)
         self.groups.pop(group_name)
@@ -46,9 +46,8 @@ class GroupView(QTreeWidget):
                 to_rem.append(url_id)
         for rem in to_rem:
             self.urls.pop(rem)
-
-    # handles removing from all group if group_name set to all
-    def remove_url(self, url, group_name):
+        
+    def removeUrl(self, url,group_name): #handles removing from all group if group_name set to all
         if (group_name == "All"):
             for group in self.groups.keys():
                 url_id = f"{group}_{url}"
@@ -58,9 +57,10 @@ class GroupView(QTreeWidget):
                     self.urls.pop(url_id)
         else:
             url_id = f"{group_name}_{url}"
-            item = self.url[url_id]
-            self.groups[group_name].removeChild(item)
-            self.urls.pop(url_id)
+            if url_id in self.urls:
+                item = self.urls[url_id]
+                self.groups[group_name].removeChild(item)
+                self.urls.pop(url_id)
 
     def showContextMenu(self, pos):
         item = self.itemAt(pos)
@@ -72,10 +72,15 @@ class GroupView(QTreeWidget):
         menu.exec_(QCursor.pos())
 
     def menuRefreshCallback(self, clicked_item):
+        rssh = RSSHandler()
         if clicked_item.rss_type == 'url':
             url = clicked_item.text(0)
             self.refresh_url_data(url)
 
+            art = rssh.returnArticles()
+            URLHandler.appendDownloadedArticles(url, art)
+            self.parent().parent().refreshFeed(clicked_item)
+            
         elif clicked_item.rss_type == 'group':
             groupName = clicked_item.text(0)
             dbh = DatabaseHandler()
@@ -83,16 +88,11 @@ class GroupView(QTreeWidget):
 
             for idx in res['groups'][groupName]:
                 url = res['urls'][idx]['actual_url']
-                self.refresh_url_data(url)
-        try:
-            self.parent().parent().refresh_feed()
-        except Exception as e:
-            print(e)
+                rssh.fetchFromURL(url)
+                if rssh.fetchIsSuccess():
+                    rssh.parseXML()
 
-    def refresh_url_data(self, url):
-        rssh = RSSHandler()
-        rssh.fetchFromURL(url)
-        if rssh.fetchIsSuccess():
-            rssh.parseXML()
-        art = rssh.returnArticles()
-        URLHandler.appendDownloadedArticles(url, art)
+                art = rssh.returnArticles()
+                URLHandler.appendDownloadedArticles(url, art)
+
+            self.parent().parent().refreshFeed(clicked_item)

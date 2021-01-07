@@ -1,8 +1,8 @@
 from libs.credhandler import CredentialsHandler
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QFont, QPalette, QColor
-from PySide2.QtWidgets import QLabel, QWidget, QLineEdit, QVBoxLayout, QPushButton
-
+from PySide2.QtWidgets  import QLabel, QWidget, QLineEdit, QVBoxLayout, QPushButton
+import re
 
 class FormView(QWidget):
 
@@ -70,20 +70,30 @@ class LoginView(FormView):
         super().__init__(parent)
         self._widget_label.setText("Login")
         self._action_button.setText("Login")
-        self._error_message.setText("Failed to login, bad credentials")
+        self._error_message.setText("ERROR")
         self._subtext_label.setText("Don't have an account? Register")
 
     def onConfirmPress(self, event):
         username = self._user_box.text()
         password = self._password_box.text()
+
         if len(username) > 0 and len(password) > 0:
-            credHandler = CredentialsHandler(username, password)
-            credHandler.encryptCredentials()
-            if credHandler.areCredValid():
-                self.returnSuccesfulLogin()
+            userpassregex = '([a-z]|[0-9]|\.)*'
+            resu = re.match(userpassregex, username)
+            resp = re.match(userpassregex, password)
+            if resu.span()[1] == len(resu.string) and resp.span()[1] == len(resp.string):
+                credHandler = CredentialsHandler(username,password)
+                credHandler.encryptCredentials()
+                if credHandler.areCredValid():
+                    self.returnSuccesfulLogin()
+                else:
+                    self._error_message.setText("Failed to login, bad credentials")
+                    self.displayErrorMessage()
             else:
+                self._error_message.setText("Invalid characters, use only a-z, 0-9 and periods (.)")
                 self.displayErrorMessage()
 
+    
     def onLinkPress(self, event):
         self._parent.showRegister()
 
@@ -94,21 +104,27 @@ class RegisterView(FormView):
         super().__init__(parent)
         self._widget_label.setText("Register")
         self._action_button.setText("Register")
-        self._error_message.setText("Login exists, pick different one")
+        self._error_message.setText("ERROR")
         self._subtext_label.setText("Already registered? Login")
 
     def onConfirmPress(self, event):
         username = self._user_box.text()
         password = self._password_box.text()
         if len(username) > 0 and len(password) > 0:
-            credHandler = CredentialsHandler(username, password)
-            credHandler.encryptCredentials()
-            if not credHandler.doesUserExist():
-                # getUserArticles
-                credHandler.createUser()
-                user_data = []
-                self.returnSuccesfulLogin()
+            userpassregex = '([a-z]|[0-9]|\.)*'
+            resu = re.match(userpassregex, username)
+            resp = re.match(userpassregex, password)
+            if resu.span()[1] == len(resu.string) and resp.span()[1] == len(resp.string):
+                credHandler = CredentialsHandler(username,password)
+                credHandler.encryptCredentials()
+                if not credHandler.doesUserExist():
+                    credHandler.createUser()
+                    self.returnSuccesfulLogin()
+                else:
+                    self.displayErrorMessage()
+                    self._error_message.setText("Login exists, pick different one")
             else:
+                self._error_message.setText("Invalid characters, use only a-z, 0-9 and periods (.)")
                 self.displayErrorMessage()
 
     def onLinkPress(self, event):

@@ -10,12 +10,12 @@ class FeedView(QListView):
         self.setModel(self.__model)
         self.setWordWrap(True)
 
-    def clear_list(self):
+    def clearList(self):
         oldState = self.selectionModel().blockSignals(True)
         self.__model.clear()
         self.selectionModel().blockSignals(oldState)
 
-    def append_message(self, site, title, desc, date, link, seen):
+    def appendMessage(self,site,title,desc,date,link,seen):
         today = time.gmtime()
 
         if (date.tm_year == today.tm_year) and (date.tm_yday == today.tm_yday):
@@ -34,11 +34,11 @@ class FeedView(QListView):
             "title": title,
             "article": desc
         }
-        self._og_bg = new_item.background()
-        self.set_seen(new_item, seen)
-        self.__model.insertRow(0, new_item)
-
-    def set_seen(self, item, seen):
+        self._og_bg = new_item.background();
+        self.setSeen(new_item,seen)
+        self.__model.insertRow(0,new_item)
+    
+    def setSeen(self,item,seen):
         if not seen:
             item.setBackground(QColor(112, 112, 112))
         else:

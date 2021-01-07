@@ -36,7 +36,7 @@ class ArticleBox(QFrame):
         self.__content_box.loadFinished.connect(self.loadFinishedCallback)
         self.__link_btn = QPushButton()
         self.__link_btn.setFlat(True)
-        self.__link_btn.clicked.connect(self.open_link)
+        self.__link_btn.clicked.connect(self.openLink)
         self.__layout.addWidget(self.__label)
         self.__layout.addWidget(self.__site)
         self.__layout.addWidget(self.__content_box)
@@ -48,14 +48,14 @@ class ArticleBox(QFrame):
 
     def loadFinishedCallback(self):
         print('Web view load finished.')
-
-    def set_data(self, site, link, title, article):
+        
+    def setData(self,site,link,title,article):
         self.__content_box.setHtml(article, link)
         self.__link_btn.setText(f"Read more")
         # add webbrowser handling
         self.__link = link
         self.__site.setText(site)
         self.__label.setText(title)
-
-    def open_link(self):
+        
+    def openLink(self):
         webbrowser.open_new_tab(self.__link)
