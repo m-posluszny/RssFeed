@@ -15,7 +15,7 @@ class URLHandler:
 
         for entry in res['urls']:
             if entry['actual_url'] == url:
-                return
+                return False
 
         new_entry = {
             'actual_url': url,
@@ -32,7 +32,7 @@ class URLHandler:
             stats = []
             stats.append([url, 1])
             dbh.add_entry("__all_urls_statistics__", stats)
-            return
+            return True
         url_exists = False
         for i, stat in enumerate(stats):
             if url in stat:
@@ -42,6 +42,7 @@ class URLHandler:
         if not url_exists:
             stats.append([url, 1])
         dbh.add_entry("__all_urls_statistics__", stats)
+        return True
 
     @staticmethod
     def add_url_to_group(url, group):
@@ -55,6 +56,8 @@ class URLHandler:
                 if group in res['groups']:
                     if i not in res['groups'][group]:
                         res['groups'][group].append(i)
+                    else:
+                        return -1
                 else:
                     res['groups'][group] = [i]
 

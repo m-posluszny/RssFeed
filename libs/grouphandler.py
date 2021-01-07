@@ -11,10 +11,11 @@ class GroupHandler:
         res = dbh.get_entry(username)
 
         if any([entry for entry in res['groups'] if group in entry]):
-            return
+            return False
 
         res['groups'][group] = []
         dbh.add_entry(username, res)
+        return True
 
     @staticmethod
     def remove_group(group):

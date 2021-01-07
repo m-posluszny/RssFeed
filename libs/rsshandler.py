@@ -18,6 +18,7 @@ class RSSHandler:
 
         try:
             response = requests.get(url)
+            print(response)
             self.__websiteContent = response.text
             self.__responseCode = response.status_code
         except:

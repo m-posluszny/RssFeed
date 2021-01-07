@@ -83,9 +83,10 @@ class MenuBar:
 
         if ok:
             if URLHandler.string_is_url(res):
-                URLHandler.add_url(res)
-                index = URLHandler.add_url_to_group(res, 'All')
-                self.mainView.group_view.add_url(res, 'All', index)
+                url_added = URLHandler.add_url(res)
+                if url_added:
+                    index = URLHandler.add_url_to_group(res, 'All')
+                    self.mainView.group_view.add_url(res, 'All', index)
             else:
                 print('it\'s not a url')
 
@@ -109,8 +110,9 @@ class MenuBar:
         res, ok = QInputDialog.getText(
             self.parent, "Group URL", "Enter group name: ")
         if ok:
-            GroupHandler.add_group(res)
-            self.mainView.group_view.add_group(res, [], [])
+            group_added = GroupHandler.add_group(res)
+            if group_added:
+                self.mainView.group_view.add_group(res, [], [])
 
     def remove_group_callback(self):
         prompt = 'List of Groups'
@@ -164,7 +166,8 @@ class MenuBar:
             for group in groups:
                 for url in urls:
                     index = URLHandler.add_url_to_group(url, group)
-                    self.mainView.group_view.add_url(url, group, index)
+                    if index > -1:
+                        self.mainView.group_view.add_url(url, group, index)
 
     def remove_url_from_group_callback(self):
         w = QWidget()
