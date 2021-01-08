@@ -12,7 +12,7 @@ class URLHandler:
 
         username = CredentialsHandler.lastUsername
         res = dbh.get_entry(username)
-
+        ret_index = -1
         url_index = -1
         for i,entry in enumerate(res['urls']):
             if entry['actual_url'] == url:
@@ -28,15 +28,16 @@ class URLHandler:
             }
 
             res['urls'].append(new_entry)
+            ret_index = len(res['urls'])-1
             dbh.add_entry(username, res)
         elif url_index in res['groups']['All']:
-            return False
+            return ret_index
         stats = dbh.get_entry("__all_urls_statistics__")
         if stats == None:
             stats = []
             stats.append([url, 1])
             dbh.add_entry("__all_urls_statistics__", stats)
-            return True
+            return ret_index
         url_exists = False
         for i, stat in enumerate(stats):
             if url in stat:
@@ -46,7 +47,7 @@ class URLHandler:
         if not url_exists:
             stats.append([url, 1])
         dbh.add_entry("__all_urls_statistics__", stats)
-        return True
+        return ret_index
 
     @staticmethod
     def add_url_to_group(url, group):
@@ -54,7 +55,6 @@ class URLHandler:
 
         username = CredentialsHandler.lastUsername
         res = dbh.get_entry(username)
-
         for i, entry in enumerate(res['urls']):
             if entry['actual_url'] == url:
                 if group in res['groups']:
@@ -64,7 +64,6 @@ class URLHandler:
                         return -1
                 else:
                     res['groups'][group] = [i]
-
                 dbh.add_entry(username, res)
                 return i
 
@@ -80,7 +79,6 @@ class URLHandler:
                 for group in res['groups']:
                     if i in res['groups'][group] and group != 'Most Popular URLs':
                         res['groups'][group].remove(i)
-                        print(group)
 
                 dbh.add_entry(username, res)
                 stats = dbh.get_entry("__all_urls_statistics__")
@@ -166,15 +164,15 @@ class URLHandler:
             groups.remove_group(URLHandler.popular_name)
         groups.add_group(URLHandler.popular_name)
         mostpopular = dbh.filter_list()
-        add_to_user_urls = True
         indexes = []
         for stat in mostpopular:
+            add_to_user_urls = True
             url = stat[0]
-            idx = 0
-            for user_url in user["urls"]:
+            idx=0
+            for idx,user_url in enumerate(user["urls"]):
                 if user_url["actual_url"] == url:
                     add_to_user_urls = False
-                    idx += 1
+                    break
             if add_to_user_urls:
                 idx = URLHandler.add_url(url)
             indexes.append(idx)
