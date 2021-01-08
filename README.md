@@ -19,3 +19,7 @@ Login page looks as follow:
 And the actual feed view:
 
 ![feedview](vpp/feed.png "Feed")
+
+## Presentation
+
+[Presentation](https://docs.google.com/presentation/d/1Z1N-0hVQ2g585CNDUBsv3h3wiqN87Yl3jII3jiHHbuw/edit?usp=sharing) about the creation process.
