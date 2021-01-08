@@ -101,6 +101,7 @@ class MenuBar:
         res, ok = QInputDialog.getText(
             self.parent, "Group URL", "Enter group name: ")
         if ok:
+            print(res)
             group_added = GroupHandler.add_group(res)
             if group_added:
                 self.mainView.group_view.add_group(res, [], [])
@@ -112,6 +113,7 @@ class MenuBar:
         db = DatabaseHandler()
         entries = db.get_entry(CredentialsHandler.lastUsername)
         data = [url for url in entries['groups']]
+        data = self.exclude_groups(data)
         ls = ListerView(prompt, title, data, self.parent)
         ls.enable_button_box()
 
@@ -129,6 +131,7 @@ class MenuBar:
         entries = db.get_entry(CredentialsHandler.lastUsername)
 
         ldata = [url for url in entries['groups']]
+        ldata = self.exclude_groups(ldata)
         ls = ListerView('Groups', 'Groups', ldata, self.parent)
 
         rdata = [url['actual_url'] for url in entries['urls']]
@@ -168,6 +171,7 @@ class MenuBar:
         entries = db.get_entry(CredentialsHandler.lastUsername)
 
         ldata = [url for url in entries['groups']]
+        ldata = self.exclude_groups(ldata)
         ls = ListerView('Groups', 'Groups', ldata, self.parent)
 
         rdata = [url['actual_url'] for url in entries['urls']]
@@ -200,3 +204,11 @@ class MenuBar:
 
     def logout_callback(self):
         self.parent.show_login()
+
+    
+    def exclude_groups(self,data):
+        if 'Most Popular URLs' in data:
+            data.remove('Most Popular URLs')
+        if 'All' in data:
+            data.remove('All')
+        return data
