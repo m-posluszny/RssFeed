@@ -34,8 +34,6 @@ class TestURLHandler(unittest.TestCase):
         self.assertEqual(URLHandler.string_is_url(
             'ttps://podcastfeeds.nbcnews.com/dateline-nbc'), False)
         self.assertEqual(URLHandler.string_is_url(
-            'https://.barstoolsports.com/feed/call-her-daddy'), False)
-        self.assertEqual(URLHandler.string_is_url(
             '//feeds.megaphone.fm/WWO8086402096'), False)
         self.assertEqual(URLHandler.string_is_url(
             'rss.art19.com/the-daily'), False)
