@@ -29,24 +29,22 @@ class RSSHandler:
         parsed = feedparser.parse(self.__websiteContent)
 
         rssFeed = parsed["feed"]
-        assert "title" in rssFeed
-        assert "link" in rssFeed
-        assert "subtitle" in rssFeed
 
-        rssTitle, rssLink, rssDesc = rssFeed["title"], rssFeed["link"], rssFeed["subtitle"]
+        rssTitle = rssFeed["title"] if "title" in rssFeed else ""
+        rssLink = rssFeed["link"] if "link" in rssFeed else ""
+        rssDesc = rssFeed["subtitle"] if "subtitle" in rssFeed else ""
         self.__rssHeader = RSSHeader(rssTitle, rssLink, rssDesc)
 
         rssItems = parsed["entries"]
         for item in rssItems:
-            assert "title" in item
-            assert "link" in item
-            assert "summary" in item
-            assert "published" in item
-            assert "published_parsed" in item
+            itemTitle = item["title"] if "title" in item else "null title"
+            itemLink = item["link"] if "link" in item else "null link"
+            itemSumm = item["summary"] if "summary" in item else "null summary"
+            itemPub = item["published"] if "published" in item else "null pubdate"
+            itemPubParsed = item["published_parsed"] if "published_parsed" in item else None
 
             self.__articles.append(
-                Article(item["title"], item["link"], item["summary"],
-                        item["published"], item["published_parsed"])
+                Article(itemTitle, itemLink, itemSumm, itemPub, itemPubParsed)
             )
 
     def return_articles(self):
