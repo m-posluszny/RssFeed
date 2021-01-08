@@ -1,7 +1,7 @@
 from libs.grouphandler import GroupHandler
 from libs.databasehandler import DatabaseHandler
 from libs.credhandler import CredentialsHandler
-import re
+from urllib.parse import urlparse
 
 class URLHandler:
     popular_name = "Most Popular URLs"
@@ -183,15 +183,9 @@ class URLHandler:
 
     @staticmethod
     def string_is_url(url):
-        regex = re.compile(
-            r'^(?:http|ftp)s?://'  # http:// or https://
-            # domain...
-            r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'
-            r'localhost|'  # localhost...
-            r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'  # ...or ip
-            r'(?::\d+)?'  # optional port
-            r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+        res = urlparse(url)
 
-        res = re.match(regex, url) is not None
+        hasScheme = len(res.scheme) > 0
+        hasNetloc = len(res.netloc) > 0
 
-        return res
+        return hasScheme and hasNetloc
