@@ -188,4 +188,7 @@ class URLHandler:
         hasScheme = len(res.scheme) > 0
         hasNetloc = len(res.netloc) > 0
 
-        return hasScheme and hasNetloc
+        if hasScheme and hasNetloc:
+            return 'http' in res.scheme
+        else:
+            return False
