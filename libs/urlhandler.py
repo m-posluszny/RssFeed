@@ -13,20 +13,24 @@ class URLHandler:
         username = CredentialsHandler.lastUsername
         res = dbh.get_entry(username)
 
-        for entry in res['urls']:
+        url_index = -1
+        for i,entry in enumerate(res['urls']):
             if entry['actual_url'] == url:
-                return False
+                url_index = i
+                break
+        if url_index == -1:
+            new_entry = {
+                'actual_url': url,
+                'rss_title': None,
+                'rss_link': None,
+                'rss_desc': None,
+                'articles': [],
+            }
 
-        new_entry = {
-            'actual_url': url,
-            'rss_title': None,
-            'rss_link': None,
-            'rss_desc': None,
-            'articles': [],
-        }
-
-        res['urls'].append(new_entry)
-        dbh.add_entry(username, res)
+            res['urls'].append(new_entry)
+            dbh.add_entry(username, res)
+        elif url_index in res['groups']['All']:
+            return False
         stats = dbh.get_entry("__all_urls_statistics__")
         if stats == None:
             stats = []
@@ -73,14 +77,10 @@ class URLHandler:
 
         for i, entry in enumerate(res['urls']):
             if entry['actual_url'] == url:
-                res['urls'].pop(i)
-
-                for j, group in enumerate(res['groups']):
-                    if i in res['groups'][group]:
-                        hl = res['groups'][group][:i]
-                        hr = list(
-                            map(lambda x: x - 1, res['groups'][group][i + 1:]))
-                        res['groups'][group] = hl + hr
+                for group in res['groups']:
+                    if i in res['groups'][group] and group != 'Most Popular URLs':
+                        res['groups'][group].remove(i)
+                        print(group)
 
                 dbh.add_entry(username, res)
                 stats = dbh.get_entry("__all_urls_statistics__")
