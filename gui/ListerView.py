@@ -5,6 +5,16 @@ from PySide2.QtGui import QStandardItemModel, QStandardItem
 
 class ListerView(QDialog):
     def __init__(self,  title, message, items, parent=None):
+        """
+        Constructor of ListerView which creates a new dialog with
+        scrolled items which the user can mark
+        
+        Args:
+            title (str): The dialog title that should appear
+            message (str): The message that the user will see at the top of the dialog
+            items ([str]): A list of strings that will be showns as options
+        """
+
         super(ListerView, self).__init__(parent=parent)
         form = QFormLayout(self)
         form.addRow(QLabel(message))
@@ -21,6 +31,11 @@ class ListerView(QDialog):
         self.listView.setModel(model)
 
     def mouse_click_event(self):
+        """
+        Callback method that will trigger then the user presses a mouse button
+        while hovering over an item
+        """
+
         row = [qmi.row() for qmi in self.listView.selectedIndexes()][0]
         item = self.listView.model().item(row)
         checkState = item.checkState()
@@ -31,6 +46,10 @@ class ListerView(QDialog):
         item.setCheckState(checkState)
 
     def enable_button_box(self):
+        """
+        Method for enabling the buttons the bottom that correspond to OK and Cancel
+        """
+
         form = self.layout()
         buttonBox = QDialogButtonBox(
             QDialogButtonBox.Ok | QDialogButtonBox.Cancel, Qt.Horizontal, self)
@@ -39,6 +58,11 @@ class ListerView(QDialog):
         buttonBox.rejected.connect(self.reject)
 
     def get_results(self):
+        """
+        Method for quering the results of the user markings
+        The result is a list of strings
+        """
+
         selected = []
         model = self.listView.model()
         i = 0
