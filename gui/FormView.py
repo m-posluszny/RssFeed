@@ -8,6 +8,14 @@ import re
 class FormView(QWidget):
 
     def __init__(self, parent=None):
+        """
+        Constructor of FormView which creates a new widget that has two entry boxes,
+        a button and a link to which you can attach a callback
+        
+        Args:
+            parent (QWidget): GUI parent of widget. Defaults to None.
+        """
+
         super().__init__(parent)
         self._parent = parent
         self._form_layout = QVBoxLayout(self)
@@ -53,21 +61,47 @@ class FormView(QWidget):
         self._form_layout.addStretch()
 
     def return_succesful_login(self):
+        """
+        Method called when the login was succesful and we change the shown
+        widget to the FeedView one
+        """
         self._parent.show_feed_view()
 
     def on_confirm_press(self, event):
+        """
+        Callback method called when the button is pressed
+        Here it's not doing anything
+        """
+
         pass
 
     def on_link_press(self, event):
+        """
+        Callback method called when the link is pressed
+        Here it's not doing anything
+        """
+
         pass
 
     def display_error_message(self):
+        """
+        Method for making the error message widget visible
+        """
+
         self._error_message.setVisible(True)
 
 
 class LoginView(FormView):
 
     def __init__(self, parent=None):
+        """
+        Constructor of LoginView which constructs a FormView with login
+        elements
+        
+        Args:
+            parent (QWidget): GUI parent of widget. Defaults to None.
+        """
+
         super().__init__(parent)
         self._widget_label.setText("Login")
         self._action_button.setText("Login")
@@ -75,6 +109,12 @@ class LoginView(FormView):
         self._subtext_label.setText("Don't have an account? Register")
 
     def on_confirm_press(self, event):
+        """
+        Method override for the callback when the button is pressed
+        It checkes wether the given login and password by the user is correct
+        and either calls 'return_succesful_login' or 'display_error_message'
+        """
+
         username = self._user_box.text()
         password = self._password_box.text()
 
@@ -97,12 +137,25 @@ class LoginView(FormView):
                 self.display_error_message()
 
     def on_link_press(self, event):
+        """
+        Method override for the callback when the link is pressed
+        It changes the current widget to be the RegisterView
+        """
+        
         self._parent.show_register()
 
 
 class RegisterView(FormView):
 
     def __init__(self, parent=None):
+        """
+        Constructor of RegisterView which constructs a FormView with
+        register elements
+        
+        Args:
+            parent (QWidget): GUI parent of widget. Defaults to None.
+        """
+
         super().__init__(parent)
         self._widget_label.setText("Register")
         self._action_button.setText("Register")
@@ -110,6 +163,13 @@ class RegisterView(FormView):
         self._subtext_label.setText("Already registered? Login")
 
     def on_confirm_press(self, event):
+        """
+        Method override for the callback when the button is pressed
+        It checkes wether the given login is possible and doesn't exist
+        if so it creates the user and calls 'return_succesful_login'
+        or if not 'display_error_message'
+        """
+
         username = self._user_box.text()
         password = self._password_box.text()
         if len(username) > 0 and len(password) > 0:
@@ -132,4 +192,9 @@ class RegisterView(FormView):
                 self.display_error_message()
 
     def on_link_press(self, event):
+        """
+        Method override for the callback when the link is pressed
+        It changes the current widget to be the LoginView
+        """
+
         self._parent.show_login()
