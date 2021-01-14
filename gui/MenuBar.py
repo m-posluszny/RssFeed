@@ -10,6 +10,15 @@ from PySide2.QtWidgets import QAction, QInputDialog, QAction, QDialog,  QInputDi
 class MenuBar:
 
     def __init__(self, menuBar, parent=None):
+        """
+        Constructor of MenuBar which holds all of the functionality that
+        can be accessed via the main menu bar of the application.
+
+        Args:
+            menuBar (QMenuBar): The actual Qt object of the menu bar
+            parent (QWidget): GUI parent of widget. Defaults to None.
+        """
+
         self.bar = menuBar
         self.mainView = None
         self.parent = parent
@@ -56,19 +65,39 @@ class MenuBar:
         user.addAction(logoutAction)
 
     def set_main_view(self, view):
+        """
+        Setter for the mainView field
+        """
         self.mainView = view
 
     def show_bar(self):
+        """
+        Setter for the boolean value of bar that makes it visible
+        """
         self.bar.setVisible(True)
 
     def hide_bar(self):
+        """
+        Setter for the boolean value of bar that makes it invisible
+        """
         self.bar.setVisible(False)
 
     def show_popular_callback(self):
+        """
+        Callback method for the button "Show Popular URLs"
+        It handles what things have to happen after the button press
+        """
+        
         URLHandler.get_most_popular_urls()
         self.mainView.refresh_groups(True)
 
     def add_url_callback(self):
+        """
+        Callback method for the button "Add URL"
+        It creates a dialog box that the user passes the URL into that is
+        later added to the database
+        """
+
         res, ok = QInputDialog.getText(self.parent, "Add URL", "Paste URL: ")
         res = res.strip()
         if ok:
@@ -81,6 +110,12 @@ class MenuBar:
                 print('it\'s not a url')
 
     def remove_url_callback(self):
+        """
+        Callback method for the button "Remove URL"
+        It creates a ListerView that allows the user to mark the
+        URLs that are supposed to be remove from the database
+        """
+        
         prompt = 'List of URLs'
         title = 'Choose URL to remove'
 
@@ -99,6 +134,12 @@ class MenuBar:
                 self.mainView.group_view.remove_url(res, "All")
 
     def add_group_callback(self):
+        """
+        Callback method for the button "Add group"
+        It creates a dialog box that the user passes the group name into
+        that is later added to the database
+        """
+
         res, ok = QInputDialog.getText(
             self.parent, "Group URL", "Enter group name: ")
         res = res.strip()
@@ -108,6 +149,12 @@ class MenuBar:
                 self.mainView.group_view.add_group(res, [], [])
 
     def remove_group_callback(self):
+        """
+        Callback method for the button "Remove group"
+        It creates a ListerView that allows the user to mark the
+        groups that are supposed to be remove from the database
+        """
+        
         prompt = 'List of Groups'
         title = 'Choose group to remove'
 
@@ -125,6 +172,12 @@ class MenuBar:
                 self.mainView.group_view.remove_group(res)
 
     def add_url_to_group_callback(self):
+        """
+        Callback method for the button "Add url to group"
+        It creates a window that allows the user to mark the groups
+        that and urls that are supposed to be added to them
+        """
+
         w = QWidget()
         f = QHBoxLayout(w)
 
@@ -167,6 +220,12 @@ class MenuBar:
                         self.mainView.group_view.add_url(url, group, index)
 
     def remove_url_from_group_callback(self):
+        """
+        Callback method for the button "Remove url from group"
+        It creates a window that allows the user to mark the groups
+        that and urls that are supposed to be removed from them
+        """
+        
         w = QWidget()
         f = QHBoxLayout(w)
 
@@ -208,9 +267,19 @@ class MenuBar:
                     self.mainView.group_view.remove_url(url, group)
 
     def logout_callback(self):
+        """
+        Callback method for the menu option "Logout"
+        Sets the main view back to the login screen
+        """
+
         self.parent.show_login()
 
     def exclude_groups(self, data):
+        """
+        Helper method to make sure that the user cannot modify
+        the groups that are specified here
+        """
+
         if 'Most Popular URLs' in data:
             data.remove('Most Popular URLs')
         if 'All' in data:
