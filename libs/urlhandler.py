@@ -139,7 +139,7 @@ class URLHandler:
 
         for i, entry in enumerate(res['urls']):
             if entry['actual_url'] == url:
-                if group in res['groups'] and i < len(res['groups'][group]):
+                if group in res['groups'] and i in res['groups'][group]:
                     res['groups'][group].remove(i)
                     dbh.add_entry(username, res)
 
