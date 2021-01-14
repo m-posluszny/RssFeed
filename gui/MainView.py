@@ -43,9 +43,10 @@ class MainView(QWidget):
         for group in group_dict:
             active_exists = self.get_single_group(group_dict, group)
         ix = self.group_view.model().index(0, 0)
-        if not active_exists:
+        if not active_exists or update:
             self.group_view.selectionModel().setCurrentIndex(
                 ix, QItemSelectionModel.SelectCurrent)
+            self.group_view.expand(ix)
 
     def get_single_group(self, group_dict, group):
         active_exists = False
@@ -100,10 +101,12 @@ class MainView(QWidget):
 
         URLHandler.set_article_seen(item.article_bundle['link'], True)
 
-    def refresh_groups(self):
+    def refresh_groups(self,refresh = False):
         dbh = DatabaseHandler()
         self.entry = dbh.get_entry(CredentialsHandler.lastUsername)
         self.get_user_groups(update=True)
+        if refresh:
+            self.group_view.menu_refresh_callback(self.group_view.selectedItems()[0])
 
     def refresh_feed(self, item):
         dbh = DatabaseHandler()

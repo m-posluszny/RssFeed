@@ -1,5 +1,11 @@
 from libs.rss import RSSHeader
 
+"""Article class
+containing title, link, content, pubDate and parse pubDate
+methods returns properties of this clas
+
+"""
+
 
 class Article:
     def __init__(self, title, link, desc, date, dateParsed):

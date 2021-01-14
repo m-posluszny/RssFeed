@@ -7,7 +7,6 @@ from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QAction, QInputDialog, QAction, QDialog,  QInputDialog,  QDialogButtonBox, QHBoxLayout, QVBoxLayout, QWidget
 
 
-
 class MenuBar:
 
     def __init__(self, menuBar, parent=None):
@@ -67,7 +66,7 @@ class MenuBar:
 
     def show_popular_callback(self):
         URLHandler.get_most_popular_urls()
-        self.mainView.refresh_groups()
+        self.mainView.refresh_groups(True)
 
     def add_url_callback(self):
         res, ok = QInputDialog.getText(self.parent, "Add URL", "Paste URL: ")
@@ -75,7 +74,7 @@ class MenuBar:
         if ok:
             if URLHandler.string_is_url(res):
                 url_added = URLHandler.add_url(res)
-                if url_added:
+                if url_added != -1:
                     index = URLHandler.add_url_to_group(res, 'All')
                     self.mainView.group_view.add_url(res, 'All', index)
             else:
@@ -86,8 +85,10 @@ class MenuBar:
         title = 'Choose URL to remove'
 
         db = DatabaseHandler()
+        data = []
         entries = db.get_entry(CredentialsHandler.lastUsername)
-        data = [url['actual_url'] for url in entries['urls']]
+        for index in entries['groups']['All']:
+            data.append(entries['urls'][index]['actual_url'])
         ls = ListerView(prompt, title, data, self.parent)
         ls.enable_button_box()
 
@@ -101,7 +102,6 @@ class MenuBar:
         res, ok = QInputDialog.getText(
             self.parent, "Group URL", "Enter group name: ")
         if ok:
-            print(res)
             group_added = GroupHandler.add_group(res)
             if group_added:
                 self.mainView.group_view.add_group(res, [], [])
@@ -134,7 +134,9 @@ class MenuBar:
         ldata = self.exclude_groups(ldata)
         ls = ListerView('Groups', 'Groups', ldata, self.parent)
 
-        rdata = [url['actual_url'] for url in entries['urls']]
+        rdata = []
+        for index in entries['groups']['All']:
+            rdata.append(entries['urls'][index]['actual_url'])
         rs = ListerView('Urls', 'Urls', rdata, self.parent)
 
         rs.layout().setContentsMargins(0, 0, 0, 0)
@@ -174,7 +176,9 @@ class MenuBar:
         ldata = self.exclude_groups(ldata)
         ls = ListerView('Groups', 'Groups', ldata, self.parent)
 
-        rdata = [url['actual_url'] for url in entries['urls']]
+        rdata = []
+        for index in entries['groups']['All']:
+            rdata.append(entries['urls'][index]['actual_url'])
         rs = ListerView('Urls', 'Urls', rdata, self.parent)
 
         rs.layout().setContentsMargins(0, 0, 0, 0)
@@ -205,8 +209,7 @@ class MenuBar:
     def logout_callback(self):
         self.parent.show_login()
 
-    
-    def exclude_groups(self,data):
+    def exclude_groups(self, data):
         if 'Most Popular URLs' in data:
             data.remove('Most Popular URLs')
         if 'All' in data:

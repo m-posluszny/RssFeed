@@ -5,6 +5,15 @@ from libs.credhandler import CredentialsHandler
 class GroupHandler:
     @staticmethod
     def add_group(group):
+        """
+        Add group to the database if one doesn't exists
+
+        Args:
+            group (string): name of the group
+
+        Returns:
+            bool: True if group has been added succesfully
+        """
         dbh = DatabaseHandler()
 
         username = CredentialsHandler.lastUsername
@@ -19,6 +28,15 @@ class GroupHandler:
 
     @staticmethod
     def remove_group(group):
+        """
+        Remove group from the database
+
+        Args:
+            group (string): name of the group
+
+        Returns:
+            bool: True if group has been removed succesfully
+        """
         dbh = DatabaseHandler()
 
         username = CredentialsHandler.lastUsername
@@ -28,4 +46,5 @@ class GroupHandler:
             if group in entry:
                 res['groups'].pop(group)
                 dbh.add_entry(username, res)
-                return
+                return True
+        return False

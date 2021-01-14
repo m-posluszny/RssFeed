@@ -49,6 +49,8 @@ class GroupView(QTreeWidget):
     def remove_url(self, url, group_name):
         if (group_name == "All"):
             for group in self.groups.keys():
+                if group ==  'Most Popular URLs':
+                    continue
                 url_id = f"{group}_{url}"
                 if url_id in self.urls:
                     item = self.urls[url_id]
