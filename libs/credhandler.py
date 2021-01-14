@@ -40,6 +40,9 @@ class CredentialsHandler:
             return True
 
     def create_user(self):
+        """
+
+        """
         dbh = DatabaseHandler()
 
         value = {
@@ -51,12 +54,22 @@ class CredentialsHandler:
         }
 
         result = dbh.add_entry(self.username, value)
+        return result
 
     def encrypt_credentials(self):
+        """
+        Encrypts provided password so it can't be compromised
+        """
         hasher = sha1(self.__password)
         self.__password = hasher.hexdigest()
 
     def are_cred_valid(self):
+        """
+        Checks if provided credentials are valid
+
+        Returns:
+            bool: True or False
+        """
         dbh = DatabaseHandler()
 
         # Password has to encrypted by this point

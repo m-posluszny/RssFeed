@@ -7,7 +7,6 @@ from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QAction, QInputDialog, QAction, QDialog,  QInputDialog,  QDialogButtonBox, QHBoxLayout, QVBoxLayout, QWidget
 
 
-
 class MenuBar:
 
     def __init__(self, menuBar, parent=None):
@@ -86,8 +85,10 @@ class MenuBar:
         title = 'Choose URL to remove'
 
         db = DatabaseHandler()
+        data = []
         entries = db.get_entry(CredentialsHandler.lastUsername)
-        data = [url['actual_url'] for url in entries['urls']]
+        for index in entries['groups']['All']:
+            data.append(entries['urls'][index]['actual_url'])
         ls = ListerView(prompt, title, data, self.parent)
         ls.enable_button_box()
 
@@ -134,7 +135,7 @@ class MenuBar:
         ls = ListerView('Groups', 'Groups', ldata, self.parent)
 
         rdata = []
-        for index in entries['groups']['All']:        
+        for index in entries['groups']['All']:
             rdata.append(entries['urls'][index]['actual_url'])
         rs = ListerView('Urls', 'Urls', rdata, self.parent)
 
@@ -208,8 +209,7 @@ class MenuBar:
     def logout_callback(self):
         self.parent.show_login()
 
-    
-    def exclude_groups(self,data):
+    def exclude_groups(self, data):
         if 'Most Popular URLs' in data:
             data.remove('Most Popular URLs')
         if 'All' in data:

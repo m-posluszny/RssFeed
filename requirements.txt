@@ -3,4 +3,3 @@ pyside-material
 requests
 feedparser
 lmdb
-jinja2

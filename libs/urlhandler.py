@@ -3,18 +3,28 @@ from libs.databasehandler import DatabaseHandler
 from libs.credhandler import CredentialsHandler
 from urllib.parse import urlparse
 
+
 class URLHandler:
     popular_name = "Most Popular URLs"
 
     @staticmethod
     def add_url(url):
+        """
+        Adds url to database
+
+        Args:
+            url (string): url to rss.xml 
+
+        Returns:
+            int: index of newly added url in database
+        """
         dbh = DatabaseHandler()
 
         username = CredentialsHandler.lastUsername
         res = dbh.get_entry(username)
         ret_index = -1
         url_index = -1
-        for i,entry in enumerate(res['urls']):
+        for i, entry in enumerate(res['urls']):
             if entry['actual_url'] == url:
                 url_index = i
                 break
@@ -32,6 +42,8 @@ class URLHandler:
             dbh.add_entry(username, res)
         elif url_index in res['groups']['All']:
             return ret_index
+        elif url_index not in res['groups']['All']:
+            URLHandler.add_url_to_group(url, 'All')
         stats = dbh.get_entry("__all_urls_statistics__")
         if stats == None:
             stats = []
@@ -51,6 +63,16 @@ class URLHandler:
 
     @staticmethod
     def add_url_to_group(url, group):
+        """
+        Add url to selected group
+
+        Args:
+            url (string): selected url
+            group (string): name of selected group
+
+        Returns:
+            string: Returns index of added url from url list
+        """
         dbh = DatabaseHandler()
 
         username = CredentialsHandler.lastUsername
@@ -69,6 +91,12 @@ class URLHandler:
 
     @staticmethod
     def remove_url(url):
+        """
+        Removes url from database
+
+        Args:
+            url (string): removes url from database
+        """
         dbh = DatabaseHandler()
 
         username = CredentialsHandler.lastUsername
@@ -97,6 +125,13 @@ class URLHandler:
 
     @staticmethod
     def remove_url_from_group(url, group):
+        """
+        Removes url from selected group in database
+
+        Args:
+            url ([type]): [description]
+            group ([type]): [description]
+        """
         dbh = DatabaseHandler()
 
         username = CredentialsHandler.lastUsername
@@ -112,6 +147,13 @@ class URLHandler:
 
     @staticmethod
     def append_downloaded_articles(url, articles):
+        """
+        Appends downloaded articles to database
+
+        Args:
+            url (string): url to rss
+            articles (list): list of articles objects
+        """
         dbh = DatabaseHandler()
 
         username = CredentialsHandler.lastUsername
@@ -142,6 +184,14 @@ class URLHandler:
 
     @staticmethod
     def set_article_seen(url, seen):
+        """
+        After reading article this method is used to inform database about
+        viwing it
+
+        Args:
+            url (string): url to article
+            seen (bool): true if article has been seen, otherwise false 
+        """
         dbh = DatabaseHandler()
 
         username = CredentialsHandler.lastUsername
@@ -157,6 +207,15 @@ class URLHandler:
 
     @staticmethod
     def get_most_popular_urls():
+        """
+        Return list of most popular urls
+        In user database that method creates group of most popular urls,
+        before creating it checks if one exists, if there is that group
+        method deletes it and creates it with fetched list from database
+
+        Returns:
+            tuple: tuple contains list of mostpopular urls and indexes of those urls in database
+        """
         dbh = DatabaseHandler()
         groups = GroupHandler()
         user = dbh.get_entry(CredentialsHandler.lastUsername)
@@ -168,8 +227,8 @@ class URLHandler:
         for stat in mostpopular:
             add_to_user_urls = True
             url = stat[0]
-            idx=0
-            for idx,user_url in enumerate(user["urls"]):
+            idx = 0
+            for idx, user_url in enumerate(user["urls"]):
                 if user_url["actual_url"] == url:
                     add_to_user_urls = False
                     break
@@ -181,6 +240,14 @@ class URLHandler:
 
     @staticmethod
     def string_is_url(url):
+        """
+        Checks if string is really a string
+        Args:
+            url (string): url to rss
+
+        Returns:
+            bool: true or false depending of validation of string
+        """
         res = urlparse(url)
 
         hasScheme = len(res.scheme) > 0
