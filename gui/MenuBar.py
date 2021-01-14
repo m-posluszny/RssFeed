@@ -70,7 +70,7 @@ class MenuBar:
 
     def add_url_callback(self):
         res, ok = QInputDialog.getText(self.parent, "Add URL", "Paste URL: ")
-
+        res = res.strip()
         if ok:
             if URLHandler.string_is_url(res):
                 url_added = URLHandler.add_url(res)
@@ -101,6 +101,7 @@ class MenuBar:
     def add_group_callback(self):
         res, ok = QInputDialog.getText(
             self.parent, "Group URL", "Enter group name: ")
+        res = res.strip()
         if ok:
             group_added = GroupHandler.add_group(res)
             if group_added:

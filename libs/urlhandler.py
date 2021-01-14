@@ -16,7 +16,7 @@ class URLHandler:
             url (string): url to rss.xml 
 
         Returns:
-            int: index of newly added url in database
+            int: index of newly added url in database, returns -1 if url was already in use and -2 if url wasn't in all directory
         """
         dbh = DatabaseHandler()
 
@@ -43,7 +43,7 @@ class URLHandler:
         elif url_index in res['groups']['All']:
             return ret_index
         elif url_index not in res['groups']['All']:
-            URLHandler.add_url_to_group(url, 'All')
+            ret_index = -2
         stats = dbh.get_entry("__all_urls_statistics__")
         if stats == None:
             stats = []
