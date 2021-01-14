@@ -40,6 +40,12 @@ class MainView(QWidget):
         self.setLayout(self.__main_layout)
 
     def get_user_groups(self, update=False):
+        """
+        Load all user groups from database to gui
+
+        Args:
+            update (bool, optional): Enforces selecting group to the first group, Defaults to False.
+        """
         group_dict = self.entry["groups"]
         active_exists = False
         popular_name = URLHandler.popular_name
@@ -56,6 +62,16 @@ class MainView(QWidget):
             self.group_view.expand(ix)
 
     def get_single_group(self, group_dict, group):
+        """
+        Add single group to group view, returns active groups
+
+        Args:
+            group_dict (dict): dictionary of user groups from database
+            group (string): group name
+
+        Returns:
+            bool: true if selected group is the group that is being added
+        """
         active_exists = False
         indexes = group_dict[group]
         urls = []
@@ -67,6 +83,15 @@ class MainView(QWidget):
         return active_exists
 
     def set_group(self, item, update=False):
+        """
+        Sets group to provided in item arg
+        If update is set to True group will update even if it is not currenlt selected,
+        used for refreshing
+
+        Args:
+            item (QItem): selected group 
+            update (bool, optional): Enforces group update, Defaults to False.
+        """
         if (self.selected_group != item.text(0) or update):
             self.feed_view.clear_list()
             self.selected_group = item.text(0)
@@ -86,6 +111,15 @@ class MainView(QWidget):
                 self.feed_view.append_message(**article)
 
     def get_gui_articles(self, url):
+        """
+        Returns all articles from selected url
+
+        Args:
+            url (string): url
+
+        Returns:
+            list: list of article objects
+        """
         site = url["rss_title"]
         art_list = []
         for article in url["articles"]:
@@ -101,6 +135,13 @@ class MainView(QWidget):
         return art_list
 
     def set_article(self, current):
+        """
+        Sets selected article to seen and updates data of articlebox
+        to view newest content
+
+        Args:
+            current (QItem): item conteining row with selected article
+        """
         row = [qmi.row() for qmi in self.feed_view.selectedIndexes()][0]
         item = self.feed_view.model().item(row)
         self.article_box.set_data(**item.article_bundle)

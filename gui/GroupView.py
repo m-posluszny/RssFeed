@@ -10,6 +10,12 @@ from libs.credhandler import CredentialsHandler
 class GroupView(QTreeWidget):
 
     def __init__(self, parent=None):
+        """
+        Widget showing group structure
+
+        Args:
+            parent ([QWidget, optional): GUI parent of this widget. Defaults to None.
+        """
         super().__init__(parent=parent)
         self.root = self.invisibleRootItem()
         self.setColumnCount(1)
@@ -21,6 +27,14 @@ class GroupView(QTreeWidget):
         self.urls = {}
 
     def add_group(self, group_name, urls, indexes):
+        """
+        Adds groups and all of its urls to the view
+
+        Args:
+            group_name (string): name of group
+            urls (list): list of urls
+            indexes (list): list of url indexes in database
+        """
         group_tree = QTreeWidgetItem([group_name])
         group_tree.rss_type = "group"
         self.groups[group_name] = group_tree
@@ -29,6 +43,14 @@ class GroupView(QTreeWidget):
         self.addTopLevelItem(group_tree)
 
     def add_url(self, url, group_name, index):
+        """
+        Adds url to gorup in view, needs index to read from database
+
+        Args:
+            url (string): url address of rss
+            group_name (string): name of the group
+            index (int): index of url in database
+        """
         url_row = QTreeWidgetItem([url])
         url_row.rss_type = "url"
         url_row.url_index = index
@@ -36,6 +58,12 @@ class GroupView(QTreeWidget):
         self.groups[group_name].addChild(url_row)
 
     def remove_group(self, group_name):
+        """
+        Removes group from gui
+
+        Args:
+            group_name (string)
+        """
         item = self.groups[group_name]
         self.root.removeChild(item)
         self.groups.pop(group_name)
@@ -47,9 +75,18 @@ class GroupView(QTreeWidget):
             self.urls.pop(rem)
 
     def remove_url(self, url, group_name):
+        """
+        Removes url from seleceted group
+        Ommits Most Popular Urls groups
+        Remove from all groups if removing from group All
+
+        Args:
+            url (string)
+            group_name (string)
+        """
         if (group_name == "All"):
             for group in self.groups.keys():
-                if group ==  'Most Popular URLs':
+                if group == 'Most Popular URLs':
                     continue
                 url_id = f"{group}_{url}"
                 if url_id in self.urls:
@@ -64,6 +101,13 @@ class GroupView(QTreeWidget):
                 self.urls.pop(url_id)
 
     def show_context_menu(self, pos):
+        """
+        Method which displays context menu
+        under right mouse click
+
+        Args:
+            pos (index): position at which context should be shown
+        """
         item = self.itemAt(pos)
         assert(item.columnCount() >= 1)
 
@@ -73,6 +117,13 @@ class GroupView(QTreeWidget):
         menu.exec_(QCursor.pos())
 
     def menu_refresh_callback(self, clicked_item):
+        """
+        Callback called when refresh is clicked in context menu
+        it is fetching newest data from select rss range
+
+        Args:
+            clicked_item (QItem): Group or URL item in groupview
+        """
         if clicked_item.rss_type == 'url':
             url = clicked_item.text(0)
             self.refresh_url_data(url)
@@ -88,7 +139,13 @@ class GroupView(QTreeWidget):
 
             self.parent().parent().refresh_feed(clicked_item)
 
-    def refresh_url_data(self,url):
+    def refresh_url_data(self, url):
+        """
+        Refreshes url data by fetching them from website
+
+        Args:
+            url (string)
+        """
         rssh = RSSHandler()
         rssh.fetch_from_url(url)
         if rssh.fetch_is_success():
