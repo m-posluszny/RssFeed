@@ -11,6 +11,13 @@ from PySide2.QtWidgets import QSplitter, QHBoxLayout, QWidget
 class MainView(QWidget):
 
     def __init__(self):
+        """
+        MainView of the application, contains three Widgets divided by splitters
+        from the left:
+        GroupView containg all groups info
+        FeedView containg all feed
+        ArticleBox containg selected article and its content
+        """
         super().__init__()
         self.selected_group = None
         self.group_view = GroupView(self)
@@ -96,19 +103,31 @@ class MainView(QWidget):
     def set_article(self, current):
         row = [qmi.row() for qmi in self.feed_view.selectedIndexes()][0]
         item = self.feed_view.model().item(row)
-        self.article_box.setData(**item.article_bundle)
+        self.article_box.set_data(**item.article_bundle)
         self.feed_view.set_seen(item, True)
 
         URLHandler.set_article_seen(item.article_bundle['link'], True)
 
-    def refresh_groups(self,refresh = False):
+    def refresh_groups(self, download=False):
+        """
+        Refreshes groups after adding/removing group or url
+
+        Args:
+            download (bool, optional): Option to fetch newset article while refreshing content. Defaults to False.
+        """
         dbh = DatabaseHandler()
         self.entry = dbh.get_entry(CredentialsHandler.lastUsername)
         self.get_user_groups(update=True)
-        if refresh:
-            self.group_view.menu_refresh_callback(self.group_view.selectedItems()[0])
+        if download:
+            self.group_view.menu_refresh_callback(
+                self.group_view.selectedItems()[0])
 
     def refresh_feed(self, item):
+        """Refreshes content of FeedView
+
+        Args:
+            item (QItem): Item of selected group from groupview
+        """
         dbh = DatabaseHandler()
         self.entry = dbh.get_entry(CredentialsHandler.lastUsername)
         self.set_group(item, True)

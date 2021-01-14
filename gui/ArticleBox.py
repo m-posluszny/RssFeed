@@ -9,6 +9,12 @@ import webbrowser
 class ArticleBox(QFrame):
 
     def __init__(self, parent=None):
+        """
+        Constructor of ArticleBox which display all content of article
+
+        Args:
+            parent (QWidget): GUI parent of widget. Defaults to None.
+        """
         super(ArticleBox, self).__init__(parent=parent)
         self.setStyleSheet(
             "QFrame{border: 1px solid white; border-radius: 10px;} QLabel{border: 0px solid black;} QTextEdit{border: 0px solid black;} ")
@@ -36,7 +42,7 @@ class ArticleBox(QFrame):
         self.__content_box.loadFinished.connect(self.load_finished_callback)
         self.__link_btn = QPushButton()
         self.__link_btn.setFlat(True)
-        self.__link_btn.clicked.connect(self.openLink)
+        self.__link_btn.clicked.connect(self.open_link)
         self.__link = ""
         self.__layout.addWidget(self.__label)
         self.__layout.addWidget(self.__site)
@@ -45,17 +51,35 @@ class ArticleBox(QFrame):
         self.setLayout(self.__layout)
 
     def load_started_callback(self):
+        """
+        Method which was used to measure loading time it is executed at beginning of loading content
+        """
         pass
 
     def load_finished_callback(self):
+        """
+        Method which was used to measure loading time it is executed at the end of loading content
+        """
         self.__content_box.setVisible(True)
 
-    def setData(self, site, link, title, article):
+    def set_data(self, site, link, title, article):
+        """
+        Sets content data to data from args
+
+        Args:
+            site (string): site name
+            link (string): url of the whole article
+            title (string): title of the article
+            article (string): content of article
+        """
         self.__content_box.setHtml(article, link)
         self.__link_btn.setText(f"Read more")
         self.__link = link
         self.__site.setText(site)
         self.__label.setText(title)
 
-    def openLink(self):
+    def open_link(self):
+        """
+        Opens article link in external browser
+        """
         webbrowser.open_new_tab(self.__link)
